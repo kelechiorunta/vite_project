@@ -1,6 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+
+import rateLimitMiddleware from './middleware/rateLimitMiddleware.js';
+
+dotenv.config();
 
 const app = express();
 
@@ -19,9 +25,26 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(morgan('dev'));
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'Proxy is activated.' });
+app.get('/api', (req, res, next) => {
+  try {
+    if (!req.session.no) {
+      req.session.no = 0;
+    }
+    req.session.no += 1;
+    next();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+app.use(rateLimitMiddleware);
+
+app.use((req, res, next) => {
+  console.log('session no is ', req.session.no);
+  res.json({ message: 'Proxy is activated.', no: req.session.no });
 });
 
 const PORT = process.env.PORT || 3302;
