@@ -1,0 +1,50 @@
+type Query {
+  users: [User]!
+  auth: User
+  getUnread(senderId: ID!, recipientId: ID!): UnreadResult
+  fetchChats(userId: ID!, currentUserId: ID!): ChatResponse
+}
+
+type User {
+  _id: ID
+  username: String
+  email: String
+  picture: String
+  lastMessage: String
+  lastMessageCount: Int
+  isOnline: Boolean
+  unread: [UnreadMsg]
+  phone: String
+  gender: String
+  address: String
+  birthday: String
+}
+
+type UnreadResult {
+  count: Int
+  lastMessage: String
+}
+
+type ChatMessage {
+  _id: ID!
+  content: String
+  sender: User
+  receiver: User
+  createdAt: String
+  updatedAt: String
+}
+
+type UnreadMsg {
+  _id: ID!
+  sender: User
+  recipient: User
+  count: Int
+  lastMessage: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ChatResponse {
+  messages: [ChatMessage!]!
+  notifiedUser: User
+}
