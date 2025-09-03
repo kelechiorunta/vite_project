@@ -24,3 +24,4 @@ export const logoutController = (req, res, next) => {
     res.redirect('/login');
   });
 };
+
