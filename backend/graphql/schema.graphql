@@ -1,7 +1,7 @@
 type Query {
   users: [User]!
   auth: User
-  getUnread(senderId: ID!, recipientId: ID!): UnreadResult
+  getUnread(senderIds: [ID!], recipientId: ID!): [UnreadResult]
   fetchChats(userId: ID!, currentUserId: ID!): ChatResponse
 }
 
@@ -21,8 +21,11 @@ type User {
 }
 
 type UnreadResult {
+  senderId: String
   count: Int
   lastMessage: String
+  createdAt: String
+  updatedAt: String
 }
 
 type ChatMessage {
