@@ -180,7 +180,7 @@ const configureSocket = (app, corsOptions) => {
         }
 
         await unreadEntry.save();
-        console.log('Saved successfully to unread');
+        console.log('Saved successfully to Unread messages');
 
         // Attach to user if not already present
         if (!recipientUser.unread.includes(unreadEntry._id)) {
