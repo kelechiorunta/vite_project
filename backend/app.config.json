@@ -1,0 +1,8 @@
+{
+  "nodeOptions": [
+    {
+      "import": "module"
+    }
+  ],
+  "watch-path": "./"
+}

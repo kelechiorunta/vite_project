@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from 'react';
+// import reactLogo from './assets/react.svg';
+// import viteLogo from '/vite.svg';
+import { Flex, Text, Button, Grid, Switch, TextArea, Card, Box } from '@radix-ui/themes';
+import { useTheme } from './components/theme-context';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // const [count, setCount] = useState(0);
+  const { toggleTheme, appTheme } = useTheme();
 
   useEffect(() => {
     const getProxy = async () => {
@@ -16,38 +19,44 @@ function App() {
           }
         });
         const data = await response.json();
-        console.log(data)
+        console.log(data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
+    };
     getProxy();
-  }, [])
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Box maxWidth="900px" minWidth={'clamp(900px,80%,500px)'}>
+      <Card size="2">
+        <Flex direction="column" gap="3">
+          <Grid gap="1">
+            <Text as="div" weight="bold" size="2" mb="1">
+              Feedback
+            </Text>
+            <TextArea placeholder="Write your feedback…" />
+          </Grid>
+          <Flex asChild justify="between">
+            <label>
+              <Text color="gray" size="2">
+                Attach screenshot?
+              </Text>
+              <Switch
+                size="1"
+                checked={appTheme} // controlled by context
+                onCheckedChange={(checked: boolean) => toggleTheme(checked)}
+              />
+            </label>
+          </Flex>
+          <Grid columns="3" gap="2">
+            <Button variant="surface">Back</Button>
+            <Button>Send</Button>
+          </Grid>
+        </Flex>
+      </Card>
+    </Box>
+  );
 }
 
-export default App
+export default App;

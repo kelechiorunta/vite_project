@@ -1,0 +1,19 @@
+import rateLimit from '../config/rateLimit.js';
+
+const rateLimitMiddleware = async (req, res, next) => {
+  try {
+    const { success } = await rateLimit.limit(req.user?._id);
+
+    if (!success) {
+      return res
+        .status(429)
+        .json({ error: 'Rate Limit Exceeded! Please try again after a minute or two!' });
+    }
+    next();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export default rateLimitMiddleware;
