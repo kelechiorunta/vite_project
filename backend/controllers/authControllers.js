@@ -62,6 +62,17 @@ export const passportLogin = (req, res, next) => {
   })(req, res, next);
 };
 
+export const passportRedirect = (req, res, next) => {
+  try {
+    req.session.user = req.user;
+    req.session.authenticated = req.isAuthenticated();
+    // res.json({ message: 'Login successful', user: req.user, isValid: req.isAuthenticated() });
+    res.redirect('/');
+  } catch (err) {
+    res.redirect('/login');
+  }
+};
+
 export const logoutController = (req, res, next) => {
   req.logout(function (err) {
     if (err) {
