@@ -1,8 +1,11 @@
 {
-  "nodeOptions": [
-    {
-      "import": "module"
-    }
-  ],
-  "watch-path": "./"
+  "nodeOptions": {
+    "import": "module"
+  },
+  "watch": true,
+  "watch-path": "./",
+  "watch-preserve-output": true,
+  "testRunner": {
+    "test-isolation": "process"
+  }
 }
