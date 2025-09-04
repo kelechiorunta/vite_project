@@ -11,7 +11,16 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <ThemeContext.Provider value={{ appTheme, toggleTheme: setAppTheme }}>
-      <Theme appearance={appTheme ? 'dark' : 'light'}>{children}</Theme>
+      <Theme
+        accentColor="mint"
+        grayColor="gray"
+        panelBackground="solid"
+        scaling="100%"
+        radius="full"
+        appearance={!appTheme ? 'dark' : 'light'}
+      >
+        {children}
+      </Theme>
     </ThemeContext.Provider>
   );
 }
