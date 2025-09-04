@@ -53,23 +53,31 @@ const resolvers = {
       return userObj;
     },
 
-    getUnread: async (_, { senderId, recipientId }) => {
+    getUnread: async (_, { senderIds, recipientId }) => {
       try {
         // Validate recipient
         const recipient = await User.findById(recipientId);
         if (!recipient) throw new Error('Recipient not found');
 
-        // Look for UnreadMsg document between sender and recipient
-        const unreadEntry = await UnreadMsg.findOne({
-          sender: senderId,
-          recipient: recipientId
-        });
+        // Fetch all unread entries in parallel
+        const results = await Promise.all(
+          senderIds.map(async (senderId) => {
+            const unreadEntry = await UnreadMsg.findOne({
+              sender: senderId,
+              recipient: recipientId
+            });
 
-        // Return UnreadResult format
-        return {
-          count: unreadEntry?.count || 0,
-          lastMessage: unreadEntry?.lastMessage || ''
-        };
+            return {
+              senderId,
+              count: unreadEntry?.count || 0,
+              lastMessage: unreadEntry?.lastMessage || '',
+              createdAt: unreadEntry?.createdAt || null,
+              updatedAt: unreadEntry?.updatedAt || null // optional
+            };
+          })
+        );
+
+        return results; // GraphQL returns an array of { senderId, count, lastMessage }
       } catch (err) {
         console.error('❌ getUnread error:', err);
         throw new Error('Failed to get unread count');
@@ -111,16 +119,16 @@ const resolvers = {
           await selectedUser.save();
         }
 
-        const unreadEntry = await UnreadMsg.findOne({
-          recipient: selectedUser._id,
-          sender: currentUser._id,
-          unreadMsgs: { $exists: true, $not: { $size: 0 } }
-        });
+        // const unreadEntry = await UnreadMsg.findOne({
+        //   recipient: selectedUser._id,
+        //   sender: currentUser._id,
+        //   unreadMsgs: { $exists: true, $not: { $size: 0 } }
+        // });
 
-        if (unreadEntry) {
-          await UnreadMsg.deleteOne({ _id: unreadEntry._id });
-          console.log(`🗑️ Cleared unread messages for ${selectedUser.username}`);
-        }
+        // if (unreadEntry) {
+        //   await UnreadMsg.deleteOne({ _id: unreadEntry._id });
+        //   console.log(`🗑️ Cleared unread messages for ${selectedUser.username}`);
+        // }
 
         return {
           messages: chat.messages,
