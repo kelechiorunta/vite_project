@@ -4,7 +4,7 @@ const graphqlClient = new ApolloClient({
   link: new HttpLink({
     uri:
       process.env.NODE_ENV === 'production'
-        ? 'https://vite-project-1vp3.onrender.com/graphql'
+        ? 'https://vite-project-kjia.onrender.com/graphql'
         : 'http://localhost:3302/graphql',
     credentials: 'include'
   }),
