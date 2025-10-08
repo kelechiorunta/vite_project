@@ -5,7 +5,7 @@ import Chat from '../models/Chat.js';
 import ChatMessage from '../models/ChatMessage.js';
 import UnreadMsg from '../models/UnreadMsg.js';
 
-const configureSocket = (app, corsOptions) => {
+const configureSocket = (app, corsOptions, PORT) => {
   const server = createServer(app);
   const socketOptions = { cors: corsOptions };
   const io = new Server(server, socketOptions);
@@ -258,7 +258,7 @@ const configureSocket = (app, corsOptions) => {
     });
   });
 
-  server.listen(3302, () => {
+  server.listen(PORT, () => {
     console.log(' Socket listening at ws://localhost:3002');
   });
 };
