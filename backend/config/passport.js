@@ -55,7 +55,7 @@ export const configureGooglePassport = (passport) => {
         clientID: process.env.GOOGLE_CLIENT_ID_NEW,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET_NEW,
         callbackURL: process.env.NODE_ENV
-          ? 'https://vite-project-1vp3.onrender.com/proxy/auth/oauth2/redirect/google'
+          ? 'https://vite-project-kjia.onrender.com/proxy/auth/oauth2/redirect/google'
           : 'http://localhost:5173/proxy/auth/oauth2/redirect/google',
         scope: ['profile', 'email']
       },
