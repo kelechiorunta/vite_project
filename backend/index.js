@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import ConnectMongoDBSession from 'connect-mongodb-session';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -25,6 +26,16 @@ const indexFilePath = path.resolve(import.meta.dirname, '..', 'frontend');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Session store configuration
+const MongoDBStore = ConnectMongoDBSession(session);
+const store = new MongoDBStore(
+  {
+    uri: process.env.MONGO_URI,
+    collection: 'sessions',
+    expires: 1000 * 60 * 60 * 24 * 7
+  } // Sessions expire after 1 week}
+);
+
 const sessionOptions = {
   name: 'user_session',
   resave: false,
@@ -35,7 +46,8 @@ const sessionOptions = {
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true
-  }
+  },
+  store: store
 };
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
