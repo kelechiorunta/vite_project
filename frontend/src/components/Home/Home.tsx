@@ -236,7 +236,7 @@ const Home: React.FC = () => {
     const port = 3302;
     const socketServerURL =
       process.env.NODE_ENV === 'production'
-        ? 'https://justchat-app.vercel.app'
+        ? 'https://vite-project-1vp3.onrender.com'
         : `http://${host}:${port}`;
     console.log(socketServerURL);
 
