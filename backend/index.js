@@ -19,6 +19,8 @@ import configureSocket from './config/socket.js';
 dotenv.config();
 
 const app = express();
+
+const PORT = process.env.PORT || 3302;
 // const filename = fileURLToPath(import.meta);
 console.log(path.resolve(import.meta.dirname, '..', 'frontend', 'index.html'));
 const indexFilePath = path.resolve(import.meta.dirname, '..', 'frontend');
@@ -50,11 +52,16 @@ const sessionOptions = {
   store: store
 };
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+// const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'https://justchat-app.vercel.app',
+  'https://vite-project-kjia.onrender.com'
+];
 
 export const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       return callback(null, true);
     } else {
       return callback(false, new Error('Domain not supported'));
@@ -111,7 +118,7 @@ app.get('/login', (req, res) => {
 //   }
 // });
 
-configureSocket(app, corsOptions);
+configureSocket(app, corsOptions, PORT);
 
 // app.use((req, res, next) => {
 //   console.log('session no is ', req.session.no);
@@ -122,8 +129,6 @@ app.use((err, req, res, next) => {
   console.error(err);
   next(err || { message: 'Something went wrong' });
 });
-
-const PORT = process.env.PORT || 3302;
 
 connectDB(process.env.MONGO_URI)
   .then(() => {
