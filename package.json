@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "start-dev": "concurrently \"yarn --cwd backend start\" \"yarn --cwd frontend dev\"",
+    "build": "cd frontend && yarn install && yarn build",
+    "start": "cd backend && yarn start",
+    "deploy": "yarn build && vercel --prod",
+    "vercel-build": "cd ../frontend && yarn && yarn build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

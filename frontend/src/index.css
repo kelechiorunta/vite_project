@@ -100,9 +100,9 @@ button:focus-visible {
 }
 
 .chatBody_dark {
-  background-image: url('../public/background.jpg');
+  background-image: url('./background.jpg');
 }
 
 .chatBody_light {
-  background-image: url('../public/backgroundII.png');
+  background-image: url('./backgroundII.png');
 }

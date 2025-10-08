@@ -25,8 +25,8 @@ interface SocketNotificationsProps {
  * Combined login/logout/profile notifications from socket events
  */
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({ socketInstance }) => {
-  const [signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
-  const [updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
+  const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
+  const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
   const recentlyUpdatedProfilesRef = useRef<Set<string>>(new Set());
   const loginToastRef = useRef<Id | null>(null);
   const client = useApolloClient();

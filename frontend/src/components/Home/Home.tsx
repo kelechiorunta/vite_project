@@ -202,9 +202,9 @@ const Home: React.FC = () => {
   const { appTheme } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [selectedChat, setSelectedChat] = useState<AuthContextType | null>(null);
+  const [selectedChat, _setSelectedChat] = useState<AuthContextType | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
-  const [isOnline, setIsOnline] = useState(null);
+  const [_isOnline, setIsOnline] = useState(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const [input, setInput] = useState('');
   const client = useApolloClient();
@@ -220,7 +220,7 @@ const Home: React.FC = () => {
     fetchPolicy: 'cache-and-network'
   });
 
-  const [loadChats, { data: chatData, loading: loadingChats, error: errorChats }] = useLazyQuery<
+  const [loadChats, { data: _chatData, loading: loadingChats, error: _errorChats }] = useLazyQuery<
     FetchChatsData,
     FetchChatsVars
   >(FETCH_CHATS, {
@@ -234,7 +234,10 @@ const Home: React.FC = () => {
   useEffect(() => {
     const host = window.location.hostname;
     const port = 3302;
-    const socketServerURL = `http://${host}:${port}`;
+    const socketServerURL =
+      process.env.NODE_ENV === 'production'
+        ? 'https://justchat-app.vercel.app'
+        : `http://${host}:${port}`;
     console.log(socketServerURL);
 
     const socketInstance = io(socketServerURL, {
@@ -256,8 +259,8 @@ const Home: React.FC = () => {
 
   const {
     data: unreadData,
-    error: unreadError,
-    loading: unreadLoading
+    error: _unreadError,
+    loading: _unreadLoading
   } = useQuery<GetUnreadData, GetUnreadVars>(GET_UNREAD, {
     variables: {
       senderIds: users?.map((u) => u?._id) as string[],
