@@ -38,7 +38,7 @@ export const ChatHeader: React.FC<{
         ) : null}
 
         <Avatar
-          src={typeof contact?.picture === 'string' ? contact.picture : undefined}
+          src={typeof contact?.picture === 'string' ? contact.picture : './avatar.png'}
           fallback={typeof contact?.username === 'string' ? contact.username[0] : '?'}
           radius="full"
           size="3"
@@ -50,7 +50,7 @@ export const ChatHeader: React.FC<{
               <>
                 <Badge color="green">Online</Badge>
                 <Text size="1" color={isTyping ? 'green' : 'gray'}>
-                  {isTyping ? 'typing...' : (contact?.lastMessage ?? '')}
+                  {isTyping ? 'typing...' : ''}
                 </Text>
               </>
             ) : (
