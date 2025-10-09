@@ -104,6 +104,9 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(path.join(indexFilePath, 'dist', 'index.html'));
 });
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(indexFilePath, 'dist', 'index.html'));
+});
 
 // app.get('/proxy/api', (req, res, next) => {
 //   try {
