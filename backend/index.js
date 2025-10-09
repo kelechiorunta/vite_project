@@ -21,8 +21,7 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 3302;
-// const filename = fileURLToPath(import.meta);
-console.log(path.resolve(import.meta.dirname, '..', 'frontend', 'index.html'));
+
 const indexFilePath = path.resolve(import.meta.dirname, '..', 'frontend');
 
 const __filename = fileURLToPath(import.meta.url);
@@ -88,7 +87,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'dist')));
 app.use(rateLimitMiddleware);
 
 if (process.env.NODE_ENV === 'production') {
-  // Trust production server as proxy (Vercel)
+  // Trust production server domain provider (Vercel or Render) as proxy
   app.set('trust proxy', 1);
 }
 
@@ -121,6 +120,7 @@ app.get('/register', (req, res) => {
 //   }
 // });
 
+// Socket.io server configuration
 configureSocket(app, corsOptions, PORT);
 
 // app.use((req, res, next) => {
@@ -140,5 +140,5 @@ connectDB(process.env.MONGO_URI)
   })
   .catch((err) => console.error(err));
 
-// ✅ export the app for Vercel
+// Export main file
 export default app;
