@@ -4,12 +4,14 @@
     "build": "cd frontend && yarn install && yarn build",
     "start": "cd backend && yarn install && yarn start",
     "deploy": "yarn build && vercel --prod",
-    "vercel-build": "cd ../frontend && yarn && yarn build"
+    "vercel-build": "cd ../frontend && yarn && yarn build",
+    "cy:test": "npx cypress open"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
   "dependencies": {
-    "connect-mongodb-session": "^5.0.0"
+    "connect-mongodb-session": "^5.0.0",
+    "cypress": "^15.4.0"
   }
 }
