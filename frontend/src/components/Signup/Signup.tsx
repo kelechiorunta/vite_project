@@ -45,7 +45,7 @@ type SignupProps = {
 
 const Signup: React.FC<SignupProps> = ({
   action = '/proxy/auth/signup',
-  googleHref = '/api/auth/google'
+  googleHref = '/proxy/auth/google'
 }) => {
   const [appearance, setAppearance] = React.useState<'light' | 'dark'>('light');
   const [showPassword, setShowPassword] = React.useState(false);
