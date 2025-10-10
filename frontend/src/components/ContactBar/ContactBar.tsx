@@ -269,7 +269,9 @@ const ContactBar: React.FC<{
                         textAlign: 'left',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        display: 'block',
+                        maxWidth: '150px'
                       }}
                     >
                       {isTyping ? 'typing...' : unReadData?.lastMessage || 'No messages'}
