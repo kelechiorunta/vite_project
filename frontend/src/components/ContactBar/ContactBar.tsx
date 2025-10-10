@@ -262,7 +262,16 @@ const ContactBar: React.FC<{
                     <Flex align="center" gap="2">
                       <Text weight="medium">{c?.username || authUser.username}</Text>
                     </Flex>
-                    <Text size="1" color={isTyping ? 'green' : 'gray'}>
+                    <Text
+                      size="1"
+                      color={isTyping ? 'green' : 'gray'}
+                      style={{
+                        textAlign: 'left',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
                       {isTyping ? 'typing...' : unReadData?.lastMessage || 'No messages'}
                     </Text>
                   </Box>

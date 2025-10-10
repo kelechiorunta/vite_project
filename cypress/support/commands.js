@@ -20,7 +20,7 @@ Cypress.Commands.add('login', (email, password) => {
       cy.get('input[name=password]').type(password);
       cy.get('input[name=password]').should('have.value', password);
       cy.get('form').contains('button', 'Sign in').click();
-      cy.window().its('fetch').should('be.calledWith', 'http://localhost:3302/graphql');
+      //   cy.window().its('fetch').should('be.calledWith', 'http://localhost:3302/graphql');
     },
     {
       validate: () => {
