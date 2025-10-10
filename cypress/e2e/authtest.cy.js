@@ -55,9 +55,15 @@ describe('authentication test', () => {
   it('tests session login command', () => {
     // cy.visit('http://localhost:5173');
     cy.login(Cypress.env('TEST_EMAIL'), Cypress.env('TEST_PASSWORD'));
-    // cy.window()
-    //   .its('fetch')
-    //   .should('have.been.calledBefore', 'http://localhost:5173/proxy/auth/signin');
-    // 'user_session').should('exist');
+    // cy.window().then((win) => {
+    //   cy.spy(win, 'fetch');
+    //   expect(win.fetch).to.be.calledBefore;
+    // });
+    cy.window().then((win) => {
+      cy.spy(win, 'fetch').as('fetchSpy'); // create a spy alias for window.fetch
+      expect(win.fetch).to.be.calledBefore;
+    });
+
+    
   });
 });
