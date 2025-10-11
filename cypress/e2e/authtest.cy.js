@@ -81,4 +81,10 @@ describe('authentication test', () => {
       expect(interception.response.headers.location).to.include('accounts.google.com');
     });
   });
+
+  it('test database connection', () => {
+    cy.task('dbConnect', Cypress.env('TEST_CONNECTION_STRING')).then((result) => {
+      expect(result).to.eq(Cypress.env('TEST_CONNECTION_STRING'));
+    });
+  });
 });
