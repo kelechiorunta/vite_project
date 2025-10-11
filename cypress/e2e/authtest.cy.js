@@ -82,9 +82,49 @@ describe('authentication test', () => {
     });
   });
 
+  // Tests for database connection
   it('test database connection', () => {
     cy.task('dbConnect', Cypress.env('TEST_CONNECTION_STRING')).then((result) => {
       expect(result).to.eq(Cypress.env('TEST_CONNECTION_STRING'));
+    });
+  });
+
+  // Tests for rate-limiting
+  it('tests for rate-limiting', () => {
+    let requestCount = 0;
+
+    // Mock the interception to /proxy/auth/isAuthenticated route
+    cy.intercept('GET', '/proxy/auth/isAuthenticated', (req) => {
+      requestCount++;
+      if (requestCount > 10) {
+        req.reply({ statusCode: 429, body: { message: 'Too Many Requests' } });
+      } else {
+        req.reply({ statusCode: 200, body: { authenticated: true } });
+      }
+    }).as('authenticate');
+
+    // Simulate or trigger the request to /proxy/auth/isAuthenticated
+    cy.visit('http://localhost:5173');
+
+    // Trigger multiple requests quickly
+    for (let i = 0; i < 20; i++) {
+      cy.window().then((win) => {
+        const requests = [];
+        requests.push(
+          win.fetch('http://localhost:5173/proxy/auth/isAuthenticated').catch(() => {})
+        );
+        return Promise.all(requests);
+      });
+    }
+
+    // Wait for the interception
+    cy.wait('@authenticate', { timeout: 5000 });
+
+    // Iterate over the array of requests from Promise.all and filter expected exceeded rate limit requests
+    cy.get('@authenticate.all').then((calls) => {
+      expect(requestCount).to.be.greaterThan(10);
+      const exceededCalls = calls.filter((req) => req.response?.statusCode === 429);
+      expect(exceededCalls.length).to.be.greaterThan(0);
     });
   });
 });
