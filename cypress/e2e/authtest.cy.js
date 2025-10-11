@@ -53,17 +53,32 @@ describe('authentication test', () => {
   });
 
   it('tests session login command', () => {
-    // cy.visit('http://localhost:5173');
+    //  Execute the Login command
     cy.login(Cypress.env('TEST_EMAIL'), Cypress.env('TEST_PASSWORD'));
-    // cy.window().then((win) => {
-    //   cy.spy(win, 'fetch');
-    //   expect(win.fetch).to.be.calledBefore;
-    // });
     cy.window().then((win) => {
-      cy.spy(win, 'fetch').as('fetchSpy'); // create a spy alias for window.fetch
+      cy.spy(win, 'fetch').as('fetchSpy');
       expect(win.fetch).to.be.calledBefore;
     });
+  });
 
-    
+  it('should intercept and mock Google OAuth request', () => {
+    // intercept the request to the backend route that triggers Google OAuth
+    cy.intercept('GET', '/proxy/auth/google', {
+      statusCode: 302,
+      headers: {
+        location: 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount'
+      }
+    }).as('googleRedirect');
+
+    // Login page that triggers the OAuth flow
+    cy.visit('http://localhost:5173/login');
+    // simulate the user clicking the Google sign-in button
+    cy.contains('Continue with Google').click();
+
+    // wait for your backend redirect to be called
+    cy.wait('@googleRedirect').then((interception) => {
+      expect(interception.response.statusCode).to.eq(302);
+      expect(interception.response.headers.location).to.include('accounts.google.com');
+    });
   });
 });
