@@ -20,7 +20,7 @@ Cypress.Commands.add('login', (email, password) => {
       cy.get('input[name=password]').type(password);
       cy.get('input[name=password]').should('have.value', password);
       cy.get('form').contains('button', 'Sign in').click();
-      //   cy.window().its('fetch').should('be.calledWith', 'http://localhost:3302/graphql');
+      //   cy.getCookie('user_session').should('exist');
     },
     {
       validate: () => {
@@ -28,12 +28,25 @@ Cypress.Commands.add('login', (email, password) => {
           req.reply({ statusCode: 200 });
         }).as('isAuthenticated');
 
-        cy.visit('http://localhost:5173');
+        cy.window().then((win) => win.fetch('http://localhost:5173/proxy/auth/isAuthenticated'));
 
         cy.wait('@isAuthenticated').its('response.statusCode').should('eq', 200);
-      }
+      },
+      cacheAcrossSpecs: true
     }
   );
+});
+
+Cypress.Commands.add('credentials', (email, password) => {
+  cy.session([email, 'credentials'], () => {
+    cy.request('POST', `http://localhost:5173/proxy/auth/signin`, {
+      email,
+      password
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      cy.getCookie('user_session').should('exist');
+    });
+  });
 });
 //
 //
