@@ -3,6 +3,7 @@ type Query {
   auth: User
   getUnread(senderIds: [ID!], recipientId: ID!): [UnreadResult]
   fetchChats(userId: ID!, currentUserId: ID!): ChatResponse
+  fetchGroups: [Group!]!
 }
 
 type User {
@@ -18,6 +19,16 @@ type User {
   gender: String
   address: String
   birthday: String
+}
+
+type Group {
+  _id: ID!
+  name: String!
+  members: [User!]!
+  description: String
+  placeholderString: String
+  logo: ID
+  createdAt: String
 }
 
 type UnreadResult {
