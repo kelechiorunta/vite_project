@@ -108,6 +108,7 @@ describe('authentication test', () => {
   });
 
   it('navigate to home page', () => {
+    cy.credentials(Cypress.env('TEST_EMAIL'), Cypress.env('TEST_PASSWORD'));
     cy.visit('http://localhost:5173');
   });
 });

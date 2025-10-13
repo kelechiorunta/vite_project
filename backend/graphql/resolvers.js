@@ -16,14 +16,6 @@ const resolvers = {
     users: async (_, args, context) => {
       if (!context?.user) return [];
 
-      // if (context.ioInstance && context.user) {
-      //   context.ioInstance.emit('LoggingIn', {
-      //     status: 'ok',
-      //     loggedInUser: context.user
-      //   });
-      //   console.log('loggingin');
-      // }
-
       try {
         const users = await User.find({ _id: { $ne: context.user._id } });
 
@@ -137,6 +129,21 @@ const resolvers = {
       } catch (err) {
         console.error('❌ Error in fetchChats:', err);
         throw new Error('Internal server error');
+      }
+    },
+    fetchGroups: async (_, __, { user }) => {
+      if (!user) throw new Error('Unauthorized');
+
+      try {
+        // ✅ Query only groups where user._id is in members
+        const userGroups = await Group.find({
+          members: { $in: [user._id] }
+        }).populate('members');
+
+        return userGroups;
+      } catch (err) {
+        console.error('❌ Error fetching groups:', err);
+        throw new Error('Failed to fetch groups');
       }
     }
   }
