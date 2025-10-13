@@ -77,6 +77,23 @@ export const FETCH_CHATS = gql`
   }
 `;
 
+export const FETCH_GROUPS = gql`
+  query FetchGroups {
+    fetchGroups {
+      _id
+      name
+      description
+      logo
+      createdAt
+      members {
+        _id
+        username
+        picture
+      }
+    }
+  }
+`;
+
 export const GET_UNREAD = gql`
   query GetUnread($senderIds: [ID!], $recipientId: ID!) {
     getUnread(senderIds: $senderIds, recipientId: $recipientId) {
