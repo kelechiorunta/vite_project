@@ -9,6 +9,7 @@ import validator from 'validator';
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: false, default: '' },
+  name: { type: String, required: false, default: '' },
   email: { type: String, required: false, validate: validator.isEmail },
   password: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },

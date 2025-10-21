@@ -84,6 +84,8 @@ export const FETCH_GROUPS = gql`
       name
       description
       logo
+      username
+      picture
       createdAt
       members {
         _id

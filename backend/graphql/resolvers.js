@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Chat from '../models/Chat.js';
 import UnreadMsg from '../models/UnreadMsg.js';
+import Group from '../models/Group.js';
 
 const formatUnreadCounts = (unreadMap) => {
   if (!(unreadMap instanceof Map)) return [];
@@ -139,7 +140,7 @@ const resolvers = {
         const userGroups = await Group.find({
           members: { $in: [user._id] }
         }).populate('members');
-
+        console.log(userGroups);
         return userGroups;
       } catch (err) {
         console.error('❌ Error fetching groups:', err);

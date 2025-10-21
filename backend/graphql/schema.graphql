@@ -9,6 +9,7 @@ type Query {
 type User {
   _id: ID
   username: String
+  name: String
   email: String
   picture: String
   lastMessage: String
@@ -26,6 +27,8 @@ type Group {
   name: String!
   members: [User!]!
   description: String
+  username: String
+  picture: String
   placeholderString: String
   logo: ID
   createdAt: String

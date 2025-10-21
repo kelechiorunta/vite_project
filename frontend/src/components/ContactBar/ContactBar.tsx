@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Flex, Avatar, Text, Badge, Box, Select, TextField, Heading } from '@radix-ui/themes';
 import * as AspectRatio from '@radix-ui/react-aspect-ratio';
-import type { AuthContextType, UnreadMap } from '../Home/Home';
+import type { AuthContextType, groupType, TabTypes, UnreadMap } from '../Home/Home';
 
 import './ContactBar.css';
 import { useTheme } from '../theme-context';
@@ -44,16 +44,23 @@ const ContactBar: React.FC<{
   typingUsers: Set<string>;
   onlineUsers: Set<string>;
   unreadMap: UnreadMap;
+  tab?: TabTypes;
+  groups?: groupType[];
+  loadingGroups?: boolean;
+  loadingError?: unknown;
 }> = ({
   onSelectContact,
-  authUser,
   mockContacts,
   loading,
   error,
   typingUsers,
   onlineUsers,
   selectedContact,
-  unreadMap
+  unreadMap,
+  tab,
+  groups,
+  loadingGroups,
+  loadingError
 }) => {
   const [query, setQuery] = React.useState('');
   const [filter, setFilter] = React.useState<'all' | 'unread' | 'online' | string>('all');
@@ -61,7 +68,7 @@ const ContactBar: React.FC<{
   const [no, setNo] = React.useState<number | null>(null);
   const { appTheme } = useTheme();
 
-  const filtered = React.useMemo(() => {
+  const filtered: AuthContextType[] | undefined = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = mockContacts?.slice();
 
@@ -92,9 +99,19 @@ const ContactBar: React.FC<{
     return list;
   }, [query, mockContacts, filter, unreadMap, onlineUsers, sort]);
 
-  const [allFilteredUsers, setFilteredUsers] = React.useState<AuthContextType[] | undefined>(
-    filtered
-  );
+  const [allFilteredUsers, setFilteredUsers] = React.useState<
+    (AuthContextType | groupType)[] | undefined
+  >(tab === 'all' ? filtered : groups);
+
+  React.useEffect(() => {
+    if (tab === 'all') {
+      setFilteredUsers(filtered);
+    } else if (tab === 'groups') {
+      setFilteredUsers(groups);
+    } else {
+      setFilteredUsers(groups);
+    }
+  }, [tab, filtered, groups]);
 
   React.useEffect(() => {
     const online = filtered && filtered.filter((user) => onlineUsers.has(user._id as string));
@@ -165,7 +182,7 @@ const ContactBar: React.FC<{
 
       {/* Contact list */}
       <Box style={{ flex: 1, overflowY: 'auto' }}>
-        {loading ? (
+        {loading || loadingGroups ? (
           Array.from({
             length: typeof mockContacts?.length === 'number' ? mockContacts.length - 1 : 18
           }).map((_, idx) => (
@@ -185,7 +202,7 @@ const ContactBar: React.FC<{
               <Skeleton className="line line-timestamp" />
             </div>
           ))
-        ) : error ? (
+        ) : error || loadingError ? (
           <div className="text-danger">Error fetching contacts</div>
         ) : allFilteredUsers && allFilteredUsers?.length === 0 ? (
           <Box p="3">
@@ -228,8 +245,20 @@ const ContactBar: React.FC<{
                 <Flex gap="3" align="center">
                   <div style={{ position: 'relative' }}>
                     <Avatar
-                      src={typeof c.picture === 'string' ? c.picture : undefined}
-                      fallback={c.username ? c.username.charAt(0).toUpperCase() : '?'}
+                      src={
+                        typeof c.picture === 'string' && c.picture
+                          ? c.picture
+                          : c.logo
+                            ? c.logo
+                            : undefined
+                      }
+                      fallback={
+                        c.username
+                          ? c.username.charAt(0).toUpperCase()
+                          : c.name
+                            ? c.name.charAt(0).toUpperCase()
+                            : '?'
+                      }
                       radius="full"
                       size="3"
                     />
@@ -260,7 +289,13 @@ const ContactBar: React.FC<{
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
                   >
                     <Flex align="center" gap="2">
-                      <Text weight="medium">{c?.username || authUser.username}</Text>
+                      <Text weight="medium">
+                        {tab === 'all' && c.username
+                          ? c.username
+                          : tab === 'groups' && c.name
+                            ? c.name
+                            : c.username}
+                      </Text>
                     </Flex>
                     <Text
                       size="1"
