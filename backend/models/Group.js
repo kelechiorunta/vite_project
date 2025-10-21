@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 
 const groupSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  username: { type: String, required: false },
+  picture: { type: String, required: false },
   // logo: { type: String, required: false },
   logo: { type: mongoose.Schema.Types.ObjectId, required: false },
   description: { type: String, required: false },

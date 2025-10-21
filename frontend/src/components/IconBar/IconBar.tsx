@@ -4,6 +4,7 @@ import { Avatar, Button, Flex, IconButton, Tooltip } from '@radix-ui/themes';
 import {
   ChatBubbleIcon,
   PersonIcon,
+  GroupIcon,
   GearIcon,
   HamburgerMenuIcon,
   ExitIcon,
@@ -11,14 +12,15 @@ import {
   MoonIcon
 } from '@radix-ui/react-icons';
 import { useTheme } from '../theme-context';
-import type { AuthContextType } from '../Home/Home';
+import type { AuthContextType, TabTypes } from '../Home/Home';
 
 interface IconBarProps {
   onOpenContacts?: () => void; // 👈 optional prop
   authUser: AuthContextType;
+  toggleTab?: (tab: TabTypes) => void;
 }
 
-const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser }) => {
+const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }) => {
   const [collapsed, setCollapsed] = React.useState(false);
 
   const { toggleTheme, appTheme } = useTheme();
@@ -71,8 +73,28 @@ const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser }) => {
           </IconButton>
         </Tooltip>
         <Tooltip content="Contacts">
-          <IconButton variant="ghost" size="3">
+          <IconButton
+            onClick={() => {
+              if (toggleTab) toggleTab('all');
+            }}
+            variant="ghost"
+            size="3"
+          >
             <PersonIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip content="Groups">
+          <IconButton
+            onClick={() => {
+              if (toggleTab) {
+                toggleTab('groups');
+                // alert('Groups');
+              }
+            }}
+            variant="ghost"
+            size="3"
+          >
+            <GroupIcon />
           </IconButton>
         </Tooltip>
       </Flex>

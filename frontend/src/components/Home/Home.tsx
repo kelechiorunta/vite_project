@@ -99,7 +99,13 @@ import { io, Socket } from 'socket.io-client';
 import debounce from 'lodash.debounce';
 import { useApolloClient } from '@apollo/client/react';
 
-import { AUTH, GET_CONTACTS, FETCH_CHATS, GET_UNREAD } from '../../graphql/queries/queries';
+import {
+  AUTH,
+  GET_CONTACTS,
+  FETCH_CHATS,
+  GET_UNREAD,
+  FETCH_GROUPS
+} from '../../graphql/queries/queries';
 
 import IconBar from '../IconBar/IconBar';
 import ContactBar from '../ContactBar/ContactBar';
@@ -133,6 +139,8 @@ export type UnreadType = {
 export type AuthContextType = {
   _id?: unknown | string;
   username?: string;
+  name?: string;
+  logo?: string;
   email?: string;
   address?: string;
   picture?: string;
@@ -194,7 +202,24 @@ type GetUnreadVars = {
   recipientId: string | undefined; // adjust based on your schema
 };
 
+export type groupType = {
+  _id?: unknown | string;
+  name?: string;
+  description?: string;
+  picture?: string;
+  username?: string;
+  logo?: string;
+  createdAt?: string;
+  members?: AuthContextType[];
+};
+
+export type GetGroups = {
+  fetchGroups: groupType[];
+};
+
 export type OnlineUser = { _id: string };
+
+export type TabTypes = 'all' | 'groups';
 
 const Home: React.FC = () => {
   const [selectedContact, setSelectedContact] = React.useState<AuthContextType | null>(null);
@@ -207,6 +232,7 @@ const Home: React.FC = () => {
   const [_isOnline, setIsOnline] = useState(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const [input, setInput] = useState('');
+  const [tab, setTab] = useState<TabTypes>('all');
   const client = useApolloClient();
 
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
@@ -228,8 +254,15 @@ const Home: React.FC = () => {
     // nextFetchPolicy: 'cache-first' // ✅ after first load, stick to cache
   });
 
+  const {
+    data: groupData,
+    loading: loadingGroups,
+    error: _errorLoading
+  } = useQuery<GetGroups>(FETCH_GROUPS);
+
   const user = data?.auth;
   const users = contacts?.users;
+  const groups = groupData?.fetchGroups;
 
   useEffect(() => {
     const host = window.location.hostname;
@@ -451,6 +484,10 @@ const Home: React.FC = () => {
     });
   }, [socket, user, onlineUsers]);
 
+  const handleSelectionTab = (selectedTab: TabTypes) => {
+    setTab(selectedTab);
+  };
+
   return (
     <Theme
       appearance={appTheme ? 'light' : 'dark'}
@@ -469,7 +506,7 @@ const Home: React.FC = () => {
         }}
       >
         {/* IconBar */}
-        <IconBar authUser={authUser} />
+        <IconBar authUser={authUser} toggleTab={handleSelectionTab} />
 
         <SocketNotifications socketInstance={socket} />
         {isMobile ? (
@@ -511,6 +548,10 @@ const Home: React.FC = () => {
                 error={contacts_error}
                 typingUsers={typingUsers}
                 selectedContact={selectedContact}
+                tab={tab}
+                groups={groups}
+                loadingGroups={loadingGroups}
+                loadingError={_errorLoading}
                 unreadMap={unreadMap}
               />
             </Box>
@@ -537,6 +578,10 @@ const Home: React.FC = () => {
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
                 selectedContact={selectedContact}
+                tab={tab}
+                groups={groups}
+                loadingGroups={loadingGroups}
+                loadingError={_errorLoading}
                 unreadMap={unreadMap}
               />
             </Box>
