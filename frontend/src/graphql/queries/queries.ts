@@ -96,6 +96,24 @@ export const FETCH_GROUPS = gql`
   }
 `;
 
+export const FETCH_GROUP_MSGS = gql`
+  query FetchGroupMsgs($groupId: ID!, $limit: Int, $cursor: String) {
+    fetchGroupMsgs(groupId: $groupId, limit: $limit, cursor: $cursor) {
+      messages {
+        _id
+        content
+        sender
+        receiver
+        senderName
+        receiverName
+        senderAvatar
+        receiverAvatar
+        createdAt
+      }
+    }
+  }
+`;
+
 export const GET_UNREAD = gql`
   query GetUnread($senderIds: [ID!], $recipientId: ID!) {
     getUnread(senderIds: $senderIds, recipientId: $recipientId) {

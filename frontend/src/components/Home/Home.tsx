@@ -104,7 +104,8 @@ import {
   GET_CONTACTS,
   FETCH_CHATS,
   GET_UNREAD,
-  FETCH_GROUPS
+  FETCH_GROUPS,
+  FETCH_GROUP_MSGS
 } from '../../graphql/queries/queries';
 
 import IconBar from '../IconBar/IconBar';
@@ -165,6 +166,11 @@ export type ChatMessage = {
   content: string;
   createdAt: string;
   lastMessage: string;
+  senderId?: string;
+  senderName?: string;
+  receiverName?: string;
+  receiverAvatar?: string;
+  senderAvatar?: string;
   // unreadCounts: recipientUser.unreadCounts,
   // unreadMsgs: recipientUser.unread
 };
@@ -191,6 +197,19 @@ type FetchChatsVars = {
   userId: unknown | string;
   currentUserId: unknown | string;
 };
+
+type FetchGroupData = {
+  fetchGroupMsgs: {
+    messages: Message[];
+    notifiedUser: AuthContextType;
+  };
+};
+
+type FetchGroupVars = {
+  groupId?: unknown | string;
+  limit?: number;
+  cursor?: string | null;
+};
 // Data shape returned from GraphQL
 type GetUnreadData = {
   getUnread: UnreadInfo[];
@@ -203,7 +222,7 @@ type GetUnreadVars = {
 };
 
 export type groupType = {
-  _id?: unknown | string;
+  _id?: string;
   name?: string;
   description?: string;
   picture?: string;
@@ -221,13 +240,28 @@ export type OnlineUser = { _id: string };
 
 export type TabTypes = 'all' | 'groups';
 
+export type Message = {
+  _id: string;
+  sender?: AuthContextType | string;
+  senderAvatar?: string;
+  receiverAvatar?: string;
+  senderId?: string;
+  receiverId?: string;
+  content?: string;
+  groupId?: string;
+  timestamp: string;
+  senderName?: string | undefined;
+  receiverName?: string;
+};
+
 const Home: React.FC = () => {
   const [selectedContact, setSelectedContact] = React.useState<AuthContextType | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { appTheme } = useTheme();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[] | Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedChat, _setSelectedChat] = useState<AuthContextType | null>(null);
+  const [selectedGroup, _setSelectedGroup] = useState<groupType | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [_isOnline, setIsOnline] = useState(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
@@ -253,6 +287,11 @@ const Home: React.FC = () => {
     fetchPolicy: 'cache-first' // ✅ serve cache first
     // nextFetchPolicy: 'cache-first' // ✅ after first load, stick to cache
   });
+
+  const [fetchGroupMsgs, { loading: _grpMsgLoading, error: _errGrpMsg }] = useLazyQuery<
+    FetchGroupData,
+    FetchGroupVars
+  >(FETCH_GROUP_MSGS, { fetchPolicy: 'cache-and-network' });
 
   const {
     data: groupData,
@@ -346,7 +385,7 @@ const Home: React.FC = () => {
       const isReceiver = msg.receiver?._id === selectedContact?._id;
 
       if (isSender || isReceiver) {
-        setMessages((prev: ChatMessage[]) => [...prev, msg]);
+        setMessages((prev) => [...(prev as ChatMessage[]), msg]);
         client.cache.updateQuery<FetchChatsData, FetchChatsVars>(
           {
             query: FETCH_CHATS,
@@ -484,8 +523,65 @@ const Home: React.FC = () => {
     });
   }, [socket, user, onlineUsers]);
 
+  const [chatCache, setChatCache] = useState<Record<string, { messages: Message[] }>>({});
+
   const handleSelectionTab = (selectedTab: TabTypes) => {
     setTab(selectedTab);
+  };
+
+  const handleSelectGroup = async (group: groupType) => {
+    if (!group) return;
+
+    _setSelectedGroup(group);
+    _setSelectedChat(null);
+    handleSelectionTab('groups');
+
+    console.log('GROUPS SELECTED');
+
+    // // ✅ Reset unread for this group
+    // setUnreadMap((prev) => {
+    //   const updated = { ...prev };
+    //   delete updated[group._id];
+    //   return updated;
+    // });
+
+    // // // ✅ Emit socket event to mark group as read
+    // if (socket) {
+    //   socket.emit('markGroupAsRead', { groupId: group._id, userId: currentUser._id });
+    // }
+
+    // ✅ 1. Show cached messages instantly if available
+    if (chatCache && chatCache?.[group._id as string]) {
+      setMessages(chatCache[group._id as string].messages);
+      // setNotifiedUser(null); // groups don’t have a single “notified user”
+    } else {
+      setMessages([]); // placeholder while loading
+    }
+
+    // ✅ 2. Fetch latest group messages from server
+    try {
+      const { data } = await fetchGroupMsgs({
+        variables: {
+          groupId: group._id,
+          limit: 30,
+          cursor: null
+        }
+      });
+
+      if (data?.fetchGroupMsgs) {
+        const { messages } = data.fetchGroupMsgs;
+
+        setMessages(messages);
+
+        // Cache them for instant reload next time
+        setChatCache((prev) => ({
+          ...prev,
+          [group._id as string]: { messages }
+        }));
+      }
+    } catch (err) {
+      console.error('❌ Error fetching group messages:', err);
+    }
   };
 
   return (
@@ -510,7 +606,7 @@ const Home: React.FC = () => {
 
         <SocketNotifications socketInstance={socket} />
         {isMobile ? (
-          selectedContact ? (
+          selectedContact || selectedGroup ? (
             // Show ChatBody full screen with back button
             <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <Button
@@ -518,6 +614,7 @@ const Home: React.FC = () => {
                 style={{ alignSelf: 'flex-start', margin: '0.5rem' }}
                 onClick={() => {
                   setSelectedContact(null);
+                  _setSelectedGroup(null);
                 }}
               >
                 ← Back
@@ -544,10 +641,12 @@ const Home: React.FC = () => {
                 user={user}
                 authUser={authUser}
                 onSelectContact={handleSelectChat} //{setSelectedContact}
+                onSelectGroup={handleSelectGroup} //{setSelectedContact}
                 loading={contacts_loading}
                 error={contacts_error}
                 typingUsers={typingUsers}
-                selectedContact={selectedContact}
+                selectedContact={selectedContact ? selectedContact : selectedGroup}
+                // selectedGroup={selectedGroup}
                 tab={tab}
                 groups={groups}
                 loadingGroups={loadingGroups}
@@ -573,11 +672,13 @@ const Home: React.FC = () => {
                 user={user}
                 authUser={authUser}
                 onSelectContact={handleSelectChat}
+                onSelectGroup={handleSelectGroup} //{setSelectedContact}
                 loading={contacts_loading}
                 error={contacts_error}
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
-                selectedContact={selectedContact}
+                // selectedContact={selectedContact}
+                selectedContact={selectedContact ? selectedContact : selectedGroup}
                 tab={tab}
                 groups={groups}
                 loadingGroups={loadingGroups}

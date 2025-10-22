@@ -4,6 +4,7 @@ type Query {
   getUnread(senderIds: [ID!], recipientId: ID!): [UnreadResult]
   fetchChats(userId: ID!, currentUserId: ID!): ChatResponse
   fetchGroups: [Group!]!
+  fetchGroupMsgs(groupId: ID!, limit: Int, cursor: String): GroupMessagesResponse!
 }
 
 type User {
@@ -61,7 +62,28 @@ type UnreadMsg {
   updatedAt: String
 }
 
+type Message {
+  _id: ID
+  chat: ID
+  sender: String
+  receiver: String
+  senderName: String
+  receiverName: String
+  receiverAvatar: String
+  senderAvatar: String
+  content: String
+  createdAt: String
+  updatedAt: String
+  imageUrl: String
+  placeholderUrl: String
+  hasImage: Boolean
+}
+
 type ChatResponse {
   messages: [ChatMessage!]!
   notifiedUser: User
+}
+
+type GroupMessagesResponse {
+  messages: [Message!]!
 }
