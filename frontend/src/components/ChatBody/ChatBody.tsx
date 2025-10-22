@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Flex, Text, TextField, IconButton, Avatar, Spinner } from '@radix-ui/themes';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { ChatHeader } from '../ChatHeader/ChatHeader';
-import type { AuthContextType, ChatMessage } from '../Home/Home';
+import type { AuthContextType, ChatMessage, Message } from '../Home/Home';
 import { useTheme } from '../theme-context';
 
 import TypingIndicator from '../Indicators/TypingIndicator';
@@ -11,7 +11,7 @@ import TypingIndicator from '../Indicators/TypingIndicator';
 const ChatBody: React.FC<{
   contactId: AuthContextType | null;
   authUser: AuthContextType;
-  messages: ChatMessage[] | null;
+  messages: ChatMessage[] | Message[] | null;
   isMobile: boolean;
   loadingChats: boolean;
   handleSend: () => void;
@@ -75,15 +75,45 @@ const ChatBody: React.FC<{
           </div>
         ) : (
           messages &&
-          messages?.map((m: ChatMessage) => (
+          (messages as ChatMessage[] | Message[] | null)?.map((m) => (
             <Flex
               key={typeof m._id === 'string' ? m._id : '?'}
-              justify={m.sender._id === authUser?._id ? 'end' : 'start'}
+              justify={
+                (typeof m.sender === 'object' &&
+                  m.sender !== null &&
+                  '_id' in m.sender &&
+                  m.sender?._id === authUser?._id) ||
+                m.sender === authUser?._id
+                  ? 'end'
+                  : 'start'
+              }
               gapX={'2'}
             >
               <Avatar
-                src={m.sender._id === authUser?._id ? authUser.picture : contactId?.picture}
-                fallback={typeof m.sender?.username === 'string' ? m.sender.username[0] : '?'}
+                src={
+                  typeof m.sender === 'object' &&
+                  m.sender !== null &&
+                  'picture' in m.sender &&
+                  m.sender?._id === authUser?._id
+                    ? m.sender?.picture
+                    : m.receiverAvatar === 'string' &&
+                        m.receiverAvatar !== null &&
+                        'receiverAvatar' in m
+                      ? m.receiverAvatar
+                      : m.senderAvatar
+                }
+                fallback={
+                  typeof m.sender === 'object' &&
+                  m.sender !== null &&
+                  'username' in m.sender &&
+                  typeof m.sender?.username === 'string'
+                    ? m.sender.username[0]
+                    : m.receiverName === 'string' && m.receiverName !== null && 'receiverName' in m
+                      ? m.receiverName[0]
+                      : m.senderName !== undefined
+                        ? m.senderName[0]
+                        : '?'
+                }
                 radius="full"
                 size="3"
               />
@@ -92,7 +122,14 @@ const ChatBody: React.FC<{
                 style={{
                   padding: '8px 12px',
                   borderRadius: '12px',
-                  background: m.sender._id === authUser?._id ? 'var(--cyan-5)' : 'var(--gray-4)',
+                  background:
+                    (typeof m.sender === 'object' &&
+                      m.sender !== null &&
+                      '_id' in m.sender &&
+                      m.sender?._id === authUser?._id) ||
+                    m.sender === authUser?._id
+                      ? 'var(--cyan-5)'
+                      : 'var(--gray-4)',
                   maxWidth: '70%'
                 }}
               >

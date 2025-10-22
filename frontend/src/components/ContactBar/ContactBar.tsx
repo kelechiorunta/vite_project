@@ -35,8 +35,10 @@ const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
 
 const ContactBar: React.FC<{
   onSelectContact: (id: AuthContextType) => void;
+  onSelectGroup?: (group: groupType) => void;
   authUser: AuthContextType;
   selectedContact: AuthContextType | null;
+  selectedGroup?: groupType | null;
   user: undefined | AuthContextType;
   mockContacts: AuthContextType[] | undefined;
   loading: boolean;
@@ -50,6 +52,7 @@ const ContactBar: React.FC<{
   loadingError?: unknown;
 }> = ({
   onSelectContact,
+  onSelectGroup,
   mockContacts,
   loading,
   error,
@@ -113,27 +116,27 @@ const ContactBar: React.FC<{
     }
   }, [tab, filtered, groups]);
 
-  React.useEffect(() => {
-    const online = filtered && filtered.filter((user) => onlineUsers.has(user._id as string));
-    const offline = filtered && filtered.filter((user) => !onlineUsers.has(user._id as string));
+  // React.useEffect(() => {
+  //   const online = filtered && filtered.filter((user) => onlineUsers.has(user._id as string));
+  //   const offline = filtered && filtered.filter((user) => !onlineUsers.has(user._id as string));
 
-    if (online && offline) {
-      const sortedUsers = [
-        ...online.sort((a: AuthContextType, b: AuthContextType) => {
-          // Handle null/undefined cases defensively
-          if (!a && !b) return 0;
-          if (!a) return 1;
-          if (!b) return -1;
+  //   if (online && offline) {
+  //     const sortedUsers = [
+  //       ...online.sort((a: AuthContextType, b: AuthContextType) => {
+  //         // Handle null/undefined cases defensively
+  //         if (!a && !b) return 0;
+  //         if (!a) return 1;
+  //         if (!b) return -1;
 
-          // Coerce boolean to number (true = 1, false = 0)
-          return Number(b.isOnline) - Number(a.isOnline);
-        }),
-        ...offline
-      ];
+  //         // Coerce boolean to number (true = 1, false = 0)
+  //         return Number(b.isOnline) - Number(a.isOnline);
+  //       }),
+  //       ...offline
+  //     ];
 
-      setFilteredUsers(sortedUsers);
-    }
-  }, [onlineUsers, filtered]);
+  //     setFilteredUsers(sortedUsers);
+  //   }
+  // }, [onlineUsers, filtered]);
   return (
     <Flex direction="column" style={{ flex: 1, height: '100%' }}>
       {/* Header: Messages + Filters */}
@@ -235,7 +238,11 @@ const ContactBar: React.FC<{
                       : 'transparent'
                 }}
                 onClick={() => {
-                  onSelectContact(c);
+                  if (tab === 'all' && onSelectContact) {
+                    onSelectContact(c);
+                  } else {
+                    if (onSelectGroup) onSelectGroup(c as groupType);
+                  }
                   setNo(idx);
                   console.log(c);
                   console.log(selectedContact);

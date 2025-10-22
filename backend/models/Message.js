@@ -1,3 +1,6 @@
+import mongoose from 'mongoose';
+import User from './User.js';
+
 const messageSchema = new mongoose.Schema({
   content: { type: String, required: true },
   sender: { type: String, required: true }, // user ID or username
