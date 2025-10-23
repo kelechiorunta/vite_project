@@ -94,7 +94,7 @@
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Theme, Flex, Box, Button } from '@radix-ui/themes';
-import { useQuery, useLazyQuery } from '@apollo/client/react';
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client/react';
 import { io, Socket } from 'socket.io-client';
 import debounce from 'lodash.debounce';
 import { useApolloClient } from '@apollo/client/react';
@@ -105,7 +105,8 @@ import {
   FETCH_CHATS,
   GET_UNREAD,
   FETCH_GROUPS,
-  FETCH_GROUP_MSGS
+  FETCH_GROUP_MSGS,
+  SEND_GROUP_MESSAGE
 } from '../../graphql/queries/queries';
 
 import IconBar from '../IconBar/IconBar';
@@ -156,6 +157,7 @@ export type AuthContextType = {
   backgroundImageId?: unknown;
   backgroundPlaceholderId?: unknown;
   occupation?: string;
+  members?: object[];
 };
 
 export type ChatMessage = {
@@ -236,6 +238,16 @@ export type GetGroups = {
   fetchGroups: groupType[];
 };
 
+export type SendGroupMessageData = {
+  sendGroupMessage: Message; // 👈 whatever your mutation returns
+};
+
+export type SendGroupMessageVars = {
+  groupId: string;
+  sender: string;
+  content: string;
+};
+
 export type OnlineUser = { _id: string };
 
 export type TabTypes = 'all' | 'groups';
@@ -279,6 +291,35 @@ const Home: React.FC = () => {
   } = useQuery<{ users: AuthContextType[] | undefined }>(GET_CONTACTS, {
     fetchPolicy: 'cache-and-network'
   });
+
+  const [sendGroupMessage] = useMutation<SendGroupMessageData, SendGroupMessageVars>(
+    SEND_GROUP_MESSAGE,
+    {
+      update(cache, { data }) {
+        const newMessage = data?.sendGroupMessage;
+        if (!newMessage || !selectedGroup?._id) return;
+
+        const existing = cache.readQuery<FetchGroupData>({
+          query: FETCH_GROUP_MSGS,
+          variables: { groupId: selectedGroup._id, limit: 30 }
+        });
+
+        if (existing?.fetchGroupMsgs?.messages) {
+          cache.writeQuery<FetchGroupData>({
+            query: FETCH_GROUP_MSGS,
+            variables: { groupId: selectedGroup._id, limit: 30 },
+            data: {
+              fetchGroupMsgs: {
+                ...existing.fetchGroupMsgs,
+                messages: [...existing.fetchGroupMsgs.messages, newMessage]
+              }
+            }
+          });
+          // setMessages(data?.fetchGroupMsgs);
+        }
+      }
+    }
+  );
 
   const [loadChats, { data: _chatData, loading: loadingChats, error: _errorChats }] = useLazyQuery<
     FetchChatsData,
@@ -504,6 +545,25 @@ const Home: React.FC = () => {
     }
   };
 
+  // Send group messages from sender
+  const handleSendGroupChat = async () => {
+    if (socket && input?.trim() && selectedGroup) {
+      try {
+        await sendGroupMessage({
+          variables: {
+            groupId: selectedGroup?._id as string,
+            sender: authUser?._id as string,
+            content: input
+          }
+        });
+        await handleSelectGroup(selectedGroup);
+        setInput('');
+      } catch (error) {
+        console.error('Failed to send message:', error);
+      }
+    }
+  };
+
   const emitTyping = debounce((receiverId: string | unknown) => {
     if (socket && receiverId && user?._id) {
       socket.emit('typing', { receiverId });
@@ -625,7 +685,8 @@ const Home: React.FC = () => {
                 messages={messages}
                 authUser={authUser}
                 contactId={selectedContact}
-                handleSend={sendMessage}
+                handleSend={selectedContact ? sendMessage : handleSendGroupChat}
+                handleGroupSend={handleSendGroupChat}
                 input={input}
                 handleInput={handleTyping} //{setInput}
                 typingUsers={typingUsers}
@@ -695,7 +756,8 @@ const Home: React.FC = () => {
                 messages={messages}
                 authUser={authUser}
                 contactId={selectedContact}
-                handleSend={sendMessage}
+                handleSend={selectedContact ? sendMessage : handleSendGroupChat}
+                handleGroupSend={handleSendGroupChat}
                 input={input}
                 handleInput={handleTyping} //{setInput}
                 typingUsers={typingUsers}

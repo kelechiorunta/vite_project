@@ -126,6 +126,20 @@ export const GET_UNREAD = gql`
   }
 `;
 
+// ✅ 2. Mutation: Send group message
+export const SEND_GROUP_MESSAGE = gql`
+  mutation SendGroupMessage($groupId: ID!, $sender: ID!, $content: String!) {
+    sendGroupMessage(groupId: $groupId, sender: $sender, content: $content) {
+      _id
+      content
+      sender
+      senderName
+      senderAvatar
+      createdAt
+    }
+  }
+`;
+
 export const UPDATE_PROFILE = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
     updateProfile(input: $input) {

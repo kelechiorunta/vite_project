@@ -316,7 +316,13 @@ const ContactBar: React.FC<{
                         maxWidth: '150px'
                       }}
                     >
-                      {isTyping ? 'typing...' : unReadData?.lastMessage || 'No messages'}
+                      {isTyping
+                        ? 'typing...'
+                        : unReadData
+                          ? unReadData?.lastMessage || 'No messages'
+                          : typeof c.members === 'object' && c.members !== null && 'members' in c
+                            ? `${c?.members?.length.toString()} members`
+                            : 'No messages'}
                     </Text>
                   </Box>
                 </Flex>

@@ -15,6 +15,7 @@ const ChatBody: React.FC<{
   isMobile: boolean;
   loadingChats: boolean;
   handleSend: () => void;
+  handleGroupSend: () => void;
   input: string;
   handleInput: (id: string) => void; //React.Dispatch<React.SetStateAction<string>>;
   typingUsers: Set<string>;
