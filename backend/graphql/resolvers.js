@@ -174,107 +174,123 @@ const resolvers = {
 
       return { messages: messages.reverse() };
     }
+  },
+
+  Mutation: {
+    // Send a group message and emit event
+    sendGroupMessage: async (_, { groupId, sender, content }, {user}) => {
+      // const user = await User.findById(sender);
+      if (!user) throw new Error('User not found');
+
+      const message = await Message.create({
+        content,
+        groupId,
+        sender,
+        senderName: user.username,
+        senderAvatar: user.picture,
+        createdAt: new Date().toISOString()
+      });
+
+      return message;
+    }
+    // updateProfile: async (_, { input }, { user, ioInstance }) => {
+    //   if (!user) throw new Error('Not authenticated');
+
+    //   try {
+    //     if (input.email) {
+    //       const existingEmailUser = await User.findOne({ email: input.email });
+
+    //       // // If the email exists and doesn't belong to the current user, block it
+    //       // if (existingEmailUser && existingEmailUser._id.toString() !== user._id.toString()) {
+    //       //   throw new Error("Email is already taken by another user");
+    //       // }
+    //       if (existingEmailUser) {
+    //         const updated = await User.findByIdAndUpdate(existingEmailUser._id, input, {
+    //           new: true,
+    //           runValidators: true
+    //         });
+
+    //         if (ioInstance && existingEmailUser) {
+    //           ioInstance.emit('Updating', { updatedUser: updated });
+    //         }
+    //         return {
+    //           success: true,
+    //           message: 'Profile updated successfully',
+    //           user: updated
+    //         };
+    //       }
+    //     }
+    //   } catch (err) {
+    //     return {
+    //       success: false,
+    //       message: err.message || 'Failed to update profile',
+    //       user: null
+    //     };
+    //   }
+    // },
+
+    // createUnread: async (_, { input }) => {
+    //   const { senderId, recipientId, newMessage } = input;
+    //   try {
+    //     // Find existing unread record for this recipient/sender pair
+    //     let unread = await UnreadMsg.findOne({ sender: senderId, recipient: recipientId });
+    //     if (!unread) {
+    //       // Create a new one if it doesn't exist
+    //       unread = new UnreadMsg({
+    //         sender: senderId,
+    //         recipient: recipientId,
+    //         count: 1,
+    //         lastMessage: newMessage
+    //       });
+    //     } else {
+    //       // Update existing one
+    //       unread.count += 1;
+    //       unread.lastMessage = newMessage;
+    //     }
+    //     await unread.save();
+    //     return {
+    //       count: unread.count,
+    //       lastMessage: unread.lastMessage
+    //     };
+    //   } catch (err) {
+    //     console.error('❌ createUnread error:', err);
+    //     throw new Error('Failed to update unread count');
+    //   }
+    // },
+
+    // clearUnread: async (_, { senderId, recipientId }) => {
+    //   try {
+    //     const unread = await UnreadMsg.findOne({ sender: senderId, recipient: recipientId });
+
+    //     if (!unread) return true; // Nothing to clear
+
+    //     unread.count = 0;
+    //     await unread.save();
+
+    //     return true;
+    //   } catch (err) {
+    //     console.error('❌ clearUnread error:', err);
+    //     return false;
+    //   }
+    // },
+
+    // markMessagesAsRead: async (_, { senderId }, context) => {
+    //   const recipientId = context.user?._id;
+    //   if (!recipientId) throw new Error('Unauthorized');
+
+    //   try {
+    //     await UnreadMsg.deleteMany({
+    //       sender: senderId,
+    //       recipient: recipientId
+    //     });
+
+    //     return true;
+    //   } catch (err) {
+    //     console.error('❌ markMessagesAsRead error:', err);
+    //     return false;
+    //   }
+    // }
   }
-
-  //   Mutation: {
-  //     updateProfile: async (_, { input }, { user, ioInstance }) => {
-  //       if (!user) throw new Error('Not authenticated');
-
-  //       try {
-  //         if (input.email) {
-  //           const existingEmailUser = await User.findOne({ email: input.email });
-
-  //           // // If the email exists and doesn't belong to the current user, block it
-  //           // if (existingEmailUser && existingEmailUser._id.toString() !== user._id.toString()) {
-  //           //   throw new Error("Email is already taken by another user");
-  //           // }
-  //           if (existingEmailUser) {
-  //             const updated = await User.findByIdAndUpdate(existingEmailUser._id, input, {
-  //               new: true,
-  //               runValidators: true
-  //             });
-
-  //             if (ioInstance && existingEmailUser) {
-  //               ioInstance.emit('Updating', { updatedUser: updated });
-  //             }
-  //             return {
-  //               success: true,
-  //               message: 'Profile updated successfully',
-  //               user: updated
-  //             };
-  //           }
-  //         }
-  //       } catch (err) {
-  //         return {
-  //           success: false,
-  //           message: err.message || 'Failed to update profile',
-  //           user: null
-  //         };
-  //       }
-  //     },
-
-  //     createUnread: async (_, { input }) => {
-  //       const { senderId, recipientId, newMessage } = input;
-  //       try {
-  //         // Find existing unread record for this recipient/sender pair
-  //         let unread = await UnreadMsg.findOne({ sender: senderId, recipient: recipientId });
-  //         if (!unread) {
-  //           // Create a new one if it doesn't exist
-  //           unread = new UnreadMsg({
-  //             sender: senderId,
-  //             recipient: recipientId,
-  //             count: 1,
-  //             lastMessage: newMessage
-  //           });
-  //         } else {
-  //           // Update existing one
-  //           unread.count += 1;
-  //           unread.lastMessage = newMessage;
-  //         }
-  //         await unread.save();
-  //         return {
-  //           count: unread.count,
-  //           lastMessage: unread.lastMessage
-  //         };
-  //       } catch (err) {
-  //         console.error('❌ createUnread error:', err);
-  //         throw new Error('Failed to update unread count');
-  //       }
-  //     },
-
-  //     clearUnread: async (_, { senderId, recipientId }) => {
-  //       try {
-  //         const unread = await UnreadMsg.findOne({ sender: senderId, recipient: recipientId });
-
-  //         if (!unread) return true; // Nothing to clear
-
-  //         unread.count = 0;
-  //         await unread.save();
-
-  //         return true;
-  //       } catch (err) {
-  //         console.error('❌ clearUnread error:', err);
-  //         return false;
-  //       }
-  //     },
-
-  //     markMessagesAsRead: async (_, { senderId }, context) => {
-  //       const recipientId = context.user?._id;
-  //       if (!recipientId) throw new Error('Unauthorized');
-
-  //       try {
-  //         await UnreadMsg.deleteMany({
-  //           sender: senderId,
-  //           recipient: recipientId
-  //         });
-
-  //         return true;
-  //       } catch (err) {
-  //         console.error('❌ markMessagesAsRead error:', err);
-  //         return false;
-  //       }
-  //     }
-  //   }
 };
 
 export default resolvers;

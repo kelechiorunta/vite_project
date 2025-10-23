@@ -7,6 +7,10 @@ type Query {
   fetchGroupMsgs(groupId: ID!, limit: Int, cursor: String): GroupMessagesResponse!
 }
 
+type Mutation {
+  sendGroupMessage(groupId: ID!, sender: ID!, content: String!): Message!
+}
+
 type User {
   _id: ID
   username: String
