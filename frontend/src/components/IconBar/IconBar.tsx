@@ -21,7 +21,7 @@ interface IconBarProps {
 }
 
 const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }) => {
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(true);
 
   const { toggleTheme, appTheme } = useTheme();
 
