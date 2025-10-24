@@ -550,14 +550,17 @@ const Home: React.FC = () => {
   const handleSendGroupChat = async () => {
     if (socket && input?.trim() && selectedGroup) {
       try {
-        await sendGroupMessage({
+        const { data } = await sendGroupMessage({
           variables: {
             groupId: selectedGroup?._id as string,
             sender: authUser?._id as string,
             content: input
           }
         });
-        await handleSelectGroup(selectedGroup);
+
+        const newGroupMsg = data?.sendGroupMessage;
+        if (!newGroupMsg) return;
+        setMessages((prev) => [...(prev as Message[]), newGroupMsg]);
         setInput('');
       } catch (error) {
         console.error('Failed to send message:', error);
