@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Avatar, Badge, Text, Flex, Box, Button } from '@radix-ui/themes';
-import type { AuthContextType } from '../Home/Home';
+import type { AuthContextType, groupType } from '../Home/Home';
 
 // Types
 export type Contact = {
@@ -15,7 +15,7 @@ export type Contact = {
 
 // Chat Header (to be used inside ChatBody)
 export const ChatHeader: React.FC<{
-  contact?: AuthContextType | null;
+  contact?: AuthContextType | groupType | null;
   onBack?: () => void; // useful for mobile switcher
   typingUsers?: Set<string>;
   onlineUsers?: Set<string>;
@@ -38,14 +38,34 @@ export const ChatHeader: React.FC<{
         ) : null}
 
         <Avatar
-          src={typeof contact?.picture === 'string' ? contact.picture : './avatar.png'}
-          fallback={typeof contact?.username === 'string' ? contact.username[0] : '?'}
+          src={
+            typeof contact?.picture === 'string'
+              ? contact.picture
+              : typeof contact?.logo === 'string' && contact.logo !== null && 'logo' in contact
+                ? contact.logo
+                : './avatar.png'
+          }
+          fallback={
+            typeof contact?.username === 'string'
+              ? contact.username[0]
+              : typeof contact?.name === 'string' && contact.name !== null && 'name' in contact
+                ? contact?.name[0]
+                : '?'
+          }
           radius="full"
           size="3"
         />
         <Box>
           <Flex direction={'column'} align="start" gap="1">
-            <Text weight="medium">{contact ? contact.username : 'Select a contact'}</Text>
+            <Text weight="medium">
+              {typeof contact?.username === 'string' &&
+              contact.username !== null &&
+              'username' in contact
+                ? contact.username
+                : typeof contact?.name === 'string' && contact.name !== null && 'name' in contact
+                  ? contact.name
+                  : 'Select a contact'}
+            </Text>
             {isOnline ? (
               <>
                 <Badge color="green">Online</Badge>
@@ -54,7 +74,13 @@ export const ChatHeader: React.FC<{
                 </Text>
               </>
             ) : (
-              <Badge color="gray">Offline</Badge>
+              <Badge color="gray">
+                {contact?.members !== null && contact?.members !== undefined
+                  ? contact?.members
+                      ?.map((member) => ('username' in member ? `${member?.username}` : 'Offline'))
+                      .join(', ')
+                  : 'Offline'}
+              </Badge>
             )}
           </Flex>
           {/* <Text size="1" color="gray">

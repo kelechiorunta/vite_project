@@ -9,7 +9,7 @@ import { useTheme } from '../theme-context';
 import TypingIndicator from '../Indicators/TypingIndicator';
 
 const ChatBody: React.FC<{
-  contactId: AuthContextType | null;
+  contact: AuthContextType | null;
   authUser: AuthContextType;
   messages: ChatMessage[] | Message[] | null;
   isMobile: boolean;
@@ -21,7 +21,7 @@ const ChatBody: React.FC<{
   typingUsers: Set<string>;
   onlineUsers: Set<string>;
 }> = ({
-  contactId,
+  contact,
   authUser,
   messages,
   isMobile,
@@ -43,7 +43,7 @@ const ChatBody: React.FC<{
 
   return (
     <Flex direction="column" style={{ flex: 1, background: 'var(--gray-1)' }}>
-      <ChatHeader onlineUsers={onlineUsers} typingUsers={typingUsers} contact={contactId} />
+      <ChatHeader onlineUsers={onlineUsers} typingUsers={typingUsers} contact={contact} />
       {/* Messages */}
       <Flex
         className={appTheme ? 'chatBody_light' : 'chatBody_dark'}
@@ -141,11 +141,11 @@ const ChatBody: React.FC<{
             </Flex>
           ))
         )}
-        {[...typingUsers].length > 0 && typingUsers.has(contactId?._id as string) && (
+        {[...typingUsers].length > 0 && typingUsers.has(contact?._id as string) && (
           <div ref={chatEndRef} className="typing-container">
             <Avatar
-              src={contactId?.picture}
-              fallback={typeof contactId?.username === 'string' ? contactId.username[0] : '?'}
+              src={contact?.picture}
+              fallback={typeof contact?.username === 'string' ? contact.username[0] : '?'}
               radius="full"
               size="3"
             />
