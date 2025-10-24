@@ -54,6 +54,9 @@ type ChatMessage {
   receiver: User
   createdAt: String
   updatedAt: String
+  imageUrl: String
+  placeholderUrl: String
+  hasImage: Boolean
 }
 
 type UnreadMsg {

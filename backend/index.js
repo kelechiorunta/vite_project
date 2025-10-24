@@ -15,6 +15,7 @@ import graphqlMiddlewareHandler from './graphql/graphqlHTTPHandler.js';
 import authRouter from './routes/authRoutes.js';
 import { connectDB } from './config/db.js';
 import configureSocket from './config/socket.js';
+import pictureRouter from './routes/pictureRoutes.js';
 
 dotenv.config();
 
@@ -93,6 +94,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // Handles all auth routes
 app.use('/proxy/auth', authRouter);
+// Handles all picture streaming
+app.use('/proxy/chat-pictures', pictureRouter);
 
 // Handles all graphql queries and mutations
 app.use('/graphql', graphqlMiddlewareHandler);

@@ -7,6 +7,7 @@ import type { AuthContextType, ChatMessage, Message } from '../Home/Home';
 import { useTheme } from '../theme-context';
 
 import TypingIndicator from '../Indicators/TypingIndicator';
+import ProgressiveImage from '../ProgressiveImage/ProgressiveImage';
 
 const ChatBody: React.FC<{
   contact: AuthContextType | null;
@@ -138,7 +139,19 @@ const ChatBody: React.FC<{
                   }}
                 >
                   {m.content}
-
+                  {m.hasImage && (
+                  <ProgressiveImage
+                    placeholderSrc={m?.placeholderUrl}
+                    src={m?.imageUrl}
+                    alt="attachment"
+                    style={{
+                      maxWidth: '200px',
+                      maxHeight: '200px',
+                      borderRadius: '8px',
+                      marginTop: '4px'
+                    }}
+                  />
+                )}
                   {<div ref={chatEndRef} />}
                 </Text>
               </Flex>

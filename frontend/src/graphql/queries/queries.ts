@@ -59,6 +59,9 @@ export const FETCH_CHATS = gql`
         content
         createdAt
         updatedAt
+        imageUrl
+        placeholderUrl
+        hasImage
         sender {
           _id
           username
@@ -109,6 +112,9 @@ export const FETCH_GROUP_MSGS = gql`
         senderAvatar
         receiverAvatar
         createdAt
+        imageUrl
+        placeholderUrl
+        hasImage
       }
     }
   }
