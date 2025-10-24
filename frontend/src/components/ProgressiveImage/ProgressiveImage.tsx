@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export type ProgressiveImgPropTypes = {
-    placeholderSrc: string;
-    src: string;
-    alt: string;
-    style: object;
-}
+  placeholderSrc: string;
+  src: string;
+  alt: string;
+  style: object;
+};
 
 const ProgressiveImage = ({ placeholderSrc, src, alt, style }: ProgressiveImgPropTypes) => {
   const [imgLoaded, setImgLoaded] = useState(false);

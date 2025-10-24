@@ -43,7 +43,9 @@ pictureRouter.get('/logo/:id', async (req, res) => {
     }
 
     res.set('Content-Type', files[0].contentType || 'application/octet-stream');
-    res.set('Cache-Control', 'no-store'); // 🚨 Disable caching for real-time updates
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=60');
+
+    // res.set('Cache-Control', 'no-store'); // 🚨 Disable caching for real-time updates
 
     const downloadStream = bucket.openDownloadStream(fileId);
 
