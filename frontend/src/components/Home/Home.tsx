@@ -755,7 +755,7 @@ const Home: React.FC = () => {
                 isMobile={isMobile}
                 messages={messages}
                 authUser={authUser}
-                contact={selectedContact? selectedContact : selectedGroup}
+                contact={selectedContact ? selectedContact : selectedGroup}
                 handleSend={selectedContact ? sendMessage : handleSendGroupChat}
                 handleGroupSend={handleSendGroupChat}
                 input={input}
