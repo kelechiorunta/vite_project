@@ -140,18 +140,18 @@ const ChatBody: React.FC<{
                 >
                   {m.content}
                   {m.hasImage && (
-                  <ProgressiveImage
-                    placeholderSrc={m?.placeholderUrl}
-                    src={m?.imageUrl}
-                    alt="attachment"
-                    style={{
-                      maxWidth: '200px',
-                      maxHeight: '200px',
-                      borderRadius: '8px',
-                      marginTop: '4px'
-                    }}
-                  />
-                )}
+                    <ProgressiveImage
+                      placeholderSrc={m?.placeholderUrl}
+                      src={m?.imageUrl}
+                      alt="attachment"
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        borderRadius: '8px',
+                        marginTop: '4px'
+                      }}
+                    />
+                  )}
                   {<div ref={chatEndRef} />}
                 </Text>
               </Flex>

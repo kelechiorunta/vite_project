@@ -173,6 +173,9 @@ export type ChatMessage = {
   receiverName?: string;
   receiverAvatar?: string;
   senderAvatar?: string;
+  imageUrl: string;
+  placeholderUrl: string;
+  hasImage: boolean;
   // unreadCounts: recipientUser.unreadCounts,
   // unreadMsgs: recipientUser.unread
 };
@@ -264,6 +267,9 @@ export type Message = {
   timestamp: string;
   senderName?: string | undefined;
   receiverName?: string;
+  imageUrl: string;
+  placeholderUrl: string;
+  hasImage: boolean;
 };
 
 const Home: React.FC = () => {
