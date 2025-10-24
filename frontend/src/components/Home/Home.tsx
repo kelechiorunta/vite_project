@@ -508,6 +508,7 @@ const Home: React.FC = () => {
   }, [selectedContact?._id, socket, user?._id, users, selectedChat, typingUsers, client]); // ✅ Run only o
 
   const handleSelectChat = async (chatUser: AuthContextType | null) => {
+    _setSelectedGroup(null);
     setSelectedContact(chatUser);
     // remove unread messages for this user
     setUnreadMap((prev) => {
@@ -591,9 +592,10 @@ const Home: React.FC = () => {
 
   const handleSelectGroup = async (group: groupType) => {
     if (!group) return;
-
-    _setSelectedGroup(group);
+    setSelectedContact(null);
     _setSelectedChat(null);
+    _setSelectedGroup(group);
+
     handleSelectionTab('groups');
 
     console.log('GROUPS SELECTED');
