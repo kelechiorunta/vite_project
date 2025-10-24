@@ -3,6 +3,7 @@ import Chat from '../models/Chat.js';
 import UnreadMsg from '../models/UnreadMsg.js';
 import Group from '../models/Group.js';
 import Message from '../models/Message.js';
+import ChatMessage from '../models/ChatMessage.js';
 
 const formatUnreadCounts = (unreadMap) => {
   if (!(unreadMap instanceof Map)) return [];
@@ -77,60 +78,107 @@ const resolvers = {
         throw new Error('Failed to get unread count');
       }
     },
+    // Former resolver for fetching chat messages without picture streaming
 
-    fetchChats: async (_, { userId, currentUserId }, context) => {
+    // fetchChats: async (_, { userId, currentUserId }, context) => {
+    //   try {
+    //     if (!currentUserId) {
+    //       throw new Error('Unauthorized');
+    //     }
+    //     if (!userId) {
+    //       throw new Error('Missing userId');
+    //     }
+
+    //     const chat = await Chat.findOne({
+    //       members: { $all: [currentUserId, userId], $size: 2 },
+    //       isGroup: false
+    //     }).populate({
+    //       path: 'messages',
+    //       model: 'ChatMessage',
+    //       options: { sort: { createdAt: 1 } },
+    //       populate: {
+    //         path: 'sender receiver',
+    //         model: 'User',
+    //         select: 'username _id picture isOnline lastMessage lastMessageCount unread'
+    //       }
+    //     });
+
+    //     if (!chat) {
+    //       return { messages: [], notifiedUser: null };
+    //     }
+
+    //     const selectedUser = await User.findById(userId);
+    //     const currentUser = await User.findById(currentUserId);
+
+    //     if (selectedUser) {
+    //       selectedUser.lastMessageCount = 0;
+    //       await selectedUser.save();
+    //     }
+
+    //     // const unreadEntry = await UnreadMsg.findOne({
+    //     //   recipient: selectedUser._id,
+    //     //   sender: currentUser._id,
+    //     //   unreadMsgs: { $exists: true, $not: { $size: 0 } }
+    //     // });
+
+    //     // if (unreadEntry) {
+    //     //   await UnreadMsg.deleteOne({ _id: unreadEntry._id });
+    //     //   console.log(`🗑️ Cleared unread messages for ${selectedUser.username}`);
+    //     // }
+
+    //     return {
+    //       messages: chat.messages,
+    //       notifiedUser: currentUser
+    //     };
+    //   } catch (err) {
+    //     console.error('❌ Error in fetchChats:', err);
+    //     throw new Error('Internal server error');
+    //   }
+    // },
+
+    fetchChats: async (_, { userId, currentUserId }) => {
       try {
-        if (!currentUserId) {
-          throw new Error('Unauthorized');
-        }
-        if (!userId) {
-          throw new Error('Missing userId');
-        }
+        // ✅ Fetch sender and receiver messages with lean (plain JS objects, much faster)
+        const messages = await ChatMessage.find({
+          $or: [
+            { sender: userId, receiver: currentUserId },
+            { sender: currentUserId, receiver: userId }
+          ]
+        })
+          .sort({ createdAt: 1 }) // oldest → newest
+          .populate('sender', '_id username picture')
+          .populate('receiver', '_id username picture')
+          .lean(); // ⚡ returns plain JS objects instead of full mongoose docs
 
-        const chat = await Chat.findOne({
-          members: { $all: [currentUserId, userId], $size: 2 },
-          isGroup: false
-        }).populate({
-          path: 'messages',
-          model: 'ChatMessage',
-          options: { sort: { createdAt: 1 } },
-          populate: {
-            path: 'sender receiver',
-            model: 'User',
-            select: 'username _id picture isOnline lastMessage lastMessageCount unread'
-          }
-        });
+        // ✅ Optionally fetch "notifiedUser" with lean
+        const notifiedUser = await User.findById(userId).lean();
 
-        if (!chat) {
-          return { messages: [], notifiedUser: null };
-        }
-
-        const selectedUser = await User.findById(userId);
-        const currentUser = await User.findById(currentUserId);
-
-        if (selectedUser) {
-          selectedUser.lastMessageCount = 0;
-          await selectedUser.save();
-        }
-
-        // const unreadEntry = await UnreadMsg.findOne({
-        //   recipient: selectedUser._id,
-        //   sender: currentUser._id,
-        //   unreadMsgs: { $exists: true, $not: { $size: 0 } }
-        // });
-
-        // if (unreadEntry) {
-        //   await UnreadMsg.deleteOne({ _id: unreadEntry._id });
-        //   console.log(`🗑️ Cleared unread messages for ${selectedUser.username}`);
-        // }
+        // ✅ Transform messages to include image/placeholder URLs
+        const enhancedMessages = messages.map((msg) => ({
+          ...msg,
+          imageUrl: msg.imageFileId
+            ? `${
+                process.env.NODE_ENV === 'production'
+                  ? 'https://vite-project-kjia.onrender.com'
+                  : 'http://localhost:3302'
+              }/proxy/chat-pictures/${msg.imageFileId.toString()}?t=${Date.now()}`
+            : null,
+          placeholderUrl: msg.placeholderImgId
+            ? `${
+                process.env.NODE_ENV === 'production'
+                  ? 'https://vite-project-kjia.onrender.com'
+                  : 'http://localhost:3302'
+              }/proxy/chat-pictures/${msg.placeholderImgId.toString()}?t=${Date.now()}`
+            : null
+        }));
 
         return {
-          messages: chat.messages,
-          notifiedUser: currentUser
+          messages: enhancedMessages,
+          notifiedUser
         };
       } catch (err) {
-        console.error('❌ Error in fetchChats:', err);
-        throw new Error('Internal server error');
+        console.error('❌ fetch_chats error:', err);
+        throw new Error('Failed to fetch chat history');
       }
     },
     fetchGroups: async (_, __, { user }) => {
@@ -178,7 +226,7 @@ const resolvers = {
 
   Mutation: {
     // Send a group message and emit event
-    sendGroupMessage: async (_, { groupId, sender, content }, {user}) => {
+    sendGroupMessage: async (_, { groupId, sender, content }, { user }) => {
       // const user = await User.findById(sender);
       if (!user) throw new Error('User not found');
 
