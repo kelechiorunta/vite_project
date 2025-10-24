@@ -256,7 +256,7 @@ const ContactBar: React.FC<{
                         typeof c.picture === 'string' && c.picture
                           ? c.picture
                           : c.logo
-                            ? c.logo
+                            ? `/proxy/chat-pictures/logo/${c.logo.toString()}`
                             : undefined
                       }
                       fallback={

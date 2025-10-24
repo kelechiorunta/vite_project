@@ -42,7 +42,7 @@ export const ChatHeader: React.FC<{
             typeof contact?.picture === 'string'
               ? contact.picture
               : typeof contact?.logo === 'string' && contact.logo !== null && 'logo' in contact
-                ? contact.logo
+                ? `/proxy/chat-pictures/logo/${contact.logo.toString()}`
                 : './avatar.png'
           }
           fallback={
