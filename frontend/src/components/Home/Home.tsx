@@ -297,6 +297,7 @@ const Home: React.FC = () => {
   } = useQuery<{ users: AuthContextType[] | undefined }>(GET_CONTACTS, {
     fetchPolicy: 'cache-and-network'
   });
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null); // ✅ new state
 
   const [sendGroupMessage] = useMutation<SendGroupMessageData, SendGroupMessageVars>(
     SEND_GROUP_MESSAGE,
@@ -513,6 +514,10 @@ const Home: React.FC = () => {
     };
   }, [selectedContact?._id, socket, user?._id, users, selectedChat, typingUsers, client]); // ✅ Run only o
 
+  const handleSelectedImage = (image: File | null) => {
+    setSelectedImage(image);
+  };
+
   const handleSelectChat = async (chatUser: AuthContextType | null) => {
     _setSelectedGroup(null);
     setSelectedContact(chatUser);
@@ -540,14 +545,39 @@ const Home: React.FC = () => {
     }
   };
 
-  //Broadcast message to receiver from sender
   const sendMessage = () => {
     if (socket && input?.trim() && selectedContact) {
       const payload = {
         content: input,
-        receiverId: selectedContact?._id // make sure this matches backend user ID
+        receiverId: selectedContact?._id
       };
-      socket.emit('sendMessage', payload);
+
+      // ✅ handle file upload
+      if (selectedImage) {
+        const file = selectedImage;
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          socket.emit('sendMessage', {
+            ...payload,
+            hasFile: true,
+            file: {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              data: reader.result
+            }
+          });
+
+          // Clear file after sending
+          setSelectedImage(null);
+        };
+
+        reader.readAsArrayBuffer(file);
+      } else {
+        socket.emit('sendMessage', payload);
+      }
+
       setInput('');
     }
   };
@@ -773,6 +803,8 @@ const Home: React.FC = () => {
                 handleInput={handleTyping} //{setInput}
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
+                handleSelectedImage={handleSelectedImage}
+                selectedImage={selectedImage}
               />
             </Box>
           </>

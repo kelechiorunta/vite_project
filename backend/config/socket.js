@@ -5,6 +5,10 @@ import Chat from '../models/Chat.js';
 import ChatMessage from '../models/ChatMessage.js';
 import UnreadMsg from '../models/UnreadMsg.js';
 
+import { GridFSBucket } from 'mongodb';
+import sharp from 'sharp';
+import mongoose from 'mongoose';
+
 const configureSocket = (app, corsOptions, PORT) => {
   const server = createServer(app);
   const socketOptions = { cors: corsOptions };
@@ -124,7 +128,7 @@ const configureSocket = (app, corsOptions, PORT) => {
       }
     });
 
-    socket.on('sendMessage', async ({ content, receiverId }) => {
+    socket.on('sendMessage', async ({ content, receiverId, hasFile, file }) => {
       const senderId = socket.data.userId;
       if (!senderId || !receiverId || !content) return;
 
@@ -140,79 +144,205 @@ const configureSocket = (app, corsOptions, PORT) => {
           await chat.save();
         }
 
-        // ✅ Create and save new message
-        let message = new ChatMessage({
-          chat: chat._id,
-          sender: senderId,
-          receiver: receiverId,
-          content
-        });
+        let fileId = null;
+        let placeholderImgId = null;
 
-        await message.save();
+        if (hasFile && file) {
+          const db = mongoose.connection.db;
+          const bucket = new GridFSBucket(db, { bucketName: 'chatPictures' });
 
-        // ✅ Update sender/receiver user data
-        const recipientUser = await User.findById(receiverId);
-        const senderUser = await User.findById(senderId);
+          const buffer = Buffer.from(file.data);
 
-        // ✅ Track unread only if recipient is offline
-        //   const isRecipientOnline = onlineUsers && onlineUsers.has(receiverId);
-        // if (!isRecipientOnline) {
-        // Update sender metadata
-        senderUser.lastMessage = content;
-        senderUser.lastMessageCount = (senderUser.lastMessageCount || 0) + 1;
+          // ✅ Create a placeholder (tiny blurred thumbnail)
+          const placeholderBuffer = await sharp(buffer)
+            .resize({ width: 20 }) // small thumbnail
+            .blur() // add blur effect for lazy loading
+            .toBuffer();
 
-        // ✅ Add to or update UnreadMsg collection
-        let unreadEntry = await UnreadMsg.findOne({
-          recipient: receiverId,
-          sender: senderId
-        });
-
-        if (!unreadEntry) {
-          unreadEntry = new UnreadMsg({
-            recipient: recipientUser,
-            sender: senderUser,
-            count: 1,
-            lastMessage: content
+          // Upload main file
+          const uploadStream = bucket.openUploadStream(file.name, {
+            contentType: file.type,
+            metadata: { senderId, receiverId }
           });
-        } else {
-          unreadEntry.count += 1;
-          unreadEntry.lastMessage = content;
+
+          uploadStream.end(buffer);
+
+          uploadStream.on('finish', async () => {
+            fileId = uploadStream.id;
+
+            // Upload placeholder file
+            const placeholderStream = bucket.openUploadStream(`${file.name}-placeholder`, {
+              contentType: file.type,
+              metadata: { senderId, receiverId, placeholder: true }
+            });
+
+            placeholderStream.end(placeholderBuffer);
+
+            placeholderStream.on('finish', async () => {
+              placeholderImgId = placeholderStream.id;
+
+              // ✅ Save message with both full & placeholder image IDs
+              let message = new ChatMessage({
+                chat: chat._id,
+                sender: senderId,
+                receiver: receiverId,
+                content,
+                hasImage: true,
+                // imageFileId: fileId,
+                placeholderImgId, // ✅ new field
+                imageUrl: `/proxy/chat-pictures/${fileId.toString()}?t=${Date.now()}`,
+                placeholderUrl: `/proxy/chat-pictures/${placeholderImgId.toString()}`
+              });
+
+              await message.save();
+
+              // ✅ Update sender/receiver user data
+              const recipientUser = await User.findById(receiverId);
+              const senderUser = await User.findById(senderId);
+
+              // ✅ Track unread only if recipient is offline
+              senderUser.lastMessage = content;
+              senderUser.lastMessageCount = (senderUser.lastMessageCount || 0) + 1;
+
+              // ✅ Add to or update UnreadMsg collection
+              let unreadEntry = await UnreadMsg.findOne({
+                recipient: receiverId,
+                sender: senderId
+              });
+
+              if (!unreadEntry) {
+                unreadEntry = new UnreadMsg({
+                  recipient: recipientUser,
+                  sender: senderUser,
+                  count: 1,
+                  lastMessage: content
+                });
+              } else {
+                unreadEntry.count += 1;
+                unreadEntry.lastMessage = content;
+              }
+
+              await unreadEntry.save();
+              console.log('Saved successfully to Unread messages');
+
+              // Attach to user if not already present
+              if (!recipientUser.unread.includes(unreadEntry._id)) {
+                recipientUser.unread.push(unreadEntry._id);
+                await recipientUser.save();
+              }
+
+              // ✅ Populate sender/receiver for frontend
+              message = await message.populate([
+                {
+                  path: 'sender',
+                  select: 'username picture isOnline lastMessage lastMessageCount'
+                },
+                { path: 'receiver', select: 'username picture isOnline' }
+              ]);
+
+              chat.messages.push(message._id);
+              await chat.save();
+
+              // ✅ Emit to both users
+              [senderId, receiverId].forEach((id) => {
+                io.to(id).emit('newMessage', {
+                  _id: message._id,
+                  chatId: chat._id,
+                  sender: message.sender,
+                  receiver: message.receiver,
+                  content: message.content,
+                  createdAt: message.createdAt,
+                  updatedAt: message.updatedAt,
+                  hasImage: true,
+                  // imageId: fileId,
+                  placeholderImgId: placeholderImgId || '',
+                  imageUrl: message.imageUrl || '',
+                  placeholderUrl: message.placeholderUrl || '', // ✅ send placeholder to client
+                  lastMessage: content,
+                  unreadCounts: recipientUser.unreadCounts,
+                  unreadMsgs: recipientUser.unread
+                });
+              });
+            });
+          });
         }
 
-        await unreadEntry.save();
-        console.log('Saved successfully to Unread messages');
-
-        // Attach to user if not already present
-        if (!recipientUser.unread.includes(unreadEntry._id)) {
-          recipientUser.unread.push(unreadEntry._id);
-          await recipientUser.save();
-        }
-        // }
-
-        // ✅ Add message to chat
-        chat.messages.push(message._id);
-        await chat.save();
-
-        // ✅ Populate sender/receiver for frontend
-        message = await message.populate([
-          { path: 'sender', select: 'username picture isOnline lastMessage lastMessageCount' },
-          { path: 'receiver', select: 'username picture isOnline' }
-        ]);
-
-        // ✅ Emit updated message to both users
-        [senderId, receiverId].forEach((id) => {
-          io.to(id).emit('newMessage', {
-            _id: message._id,
-            chatId: chat._id,
-            sender: message.sender,
-            receiver: message.receiver,
-            content: message.content,
-            createdAt: message.createdAt,
-            lastMessage: content,
-            unreadCounts: recipientUser.unreadCounts,
-            unreadMsgs: recipientUser.unread
+        // Save without pictures/images
+        else {
+          // ✅ Create and save new message
+          let message = new ChatMessage({
+            chat: chat._id,
+            sender: senderId,
+            receiver: receiverId,
+            content
           });
-        });
+
+          await message.save();
+
+          // ✅ Update sender/receiver user data
+          const recipientUser = await User.findById(receiverId);
+          const senderUser = await User.findById(senderId);
+
+          // ✅ Track unread only if recipient is offline
+          //   const isRecipientOnline = onlineUsers && onlineUsers.has(receiverId);
+          // if (!isRecipientOnline) {
+          // Update sender metadata
+          senderUser.lastMessage = content;
+          senderUser.lastMessageCount = (senderUser.lastMessageCount || 0) + 1;
+
+          // ✅ Add to or update UnreadMsg collection
+          let unreadEntry = await UnreadMsg.findOne({
+            recipient: receiverId,
+            sender: senderId
+          });
+
+          if (!unreadEntry) {
+            unreadEntry = new UnreadMsg({
+              recipient: recipientUser,
+              sender: senderUser,
+              count: 1,
+              lastMessage: content
+            });
+          } else {
+            unreadEntry.count += 1;
+            unreadEntry.lastMessage = content;
+          }
+
+          await unreadEntry.save();
+          console.log('Saved successfully to Unread messages');
+
+          // Attach to user if not already present
+          if (!recipientUser.unread.includes(unreadEntry._id)) {
+            recipientUser.unread.push(unreadEntry._id);
+            await recipientUser.save();
+          }
+          // }
+
+          // ✅ Add message to chat
+          chat.messages.push(message._id);
+          await chat.save();
+
+          // ✅ Populate sender/receiver for frontend
+          message = await message.populate([
+            { path: 'sender', select: 'username picture isOnline lastMessage lastMessageCount' },
+            { path: 'receiver', select: 'username picture isOnline' }
+          ]);
+
+          // ✅ Emit updated message to both users
+          [senderId, receiverId].forEach((id) => {
+            io.to(id).emit('newMessage', {
+              _id: message._id,
+              chatId: chat._id,
+              sender: message.sender,
+              receiver: message.receiver,
+              content: message.content,
+              createdAt: message.createdAt,
+              lastMessage: content,
+              unreadCounts: recipientUser.unreadCounts,
+              unreadMsgs: recipientUser.unread
+            });
+          });
+        }
       } catch (error) {
         console.error('❌ sendMessage error:', error);
       }

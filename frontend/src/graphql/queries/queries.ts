@@ -60,6 +60,7 @@ export const FETCH_CHATS = gql`
         createdAt
         updatedAt
         imageUrl
+        placeholderImgId
         placeholderUrl
         hasImage
         sender {
