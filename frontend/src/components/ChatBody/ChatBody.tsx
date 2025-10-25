@@ -215,7 +215,6 @@ const ChatBody: React.FC<{
   handleSend: () => void;
   handleGroupSend: () => void;
   handleSelectedImage: (image: File | null) => void;
-  selectedImage: File | null;
   input: string;
   handleInput: (id: string) => void;
   typingUsers: Set<string>;
@@ -230,7 +229,7 @@ const ChatBody: React.FC<{
   handleInput,
   typingUsers,
   onlineUsers,
-  handleSelectedImage,
+  handleSelectedImage
 }) => {
   const chatEndRef = React.useRef<HTMLDivElement | null>(null);
 

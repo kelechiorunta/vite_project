@@ -732,6 +732,7 @@ const Home: React.FC = () => {
                 handleInput={handleTyping} //{setInput}
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
+                handleSelectedImage={handleSelectedImage}
               />
             </Box>
           ) : (
@@ -804,7 +805,6 @@ const Home: React.FC = () => {
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
                 handleSelectedImage={handleSelectedImage}
-                selectedImage={selectedImage}
               />
             </Box>
           </>
