@@ -146,6 +146,7 @@ const configureSocket = (app, corsOptions, PORT) => {
 
         let fileId = null;
         let placeholderImgId = null;
+        let message = null;
 
         if (hasFile && file) {
           const db = mongoose.connection.db;
@@ -182,87 +183,90 @@ const configureSocket = (app, corsOptions, PORT) => {
               placeholderImgId = placeholderStream.id;
 
               // ✅ Save message with both full & placeholder image IDs
-              let message = new ChatMessage({
-                chat: chat._id,
-                sender: senderId,
-                receiver: receiverId,
-                content,
-                hasImage: true,
-                // imageFileId: fileId,
-                placeholderImgId, // ✅ new field
-                imageUrl: `/proxy/chat-pictures/${fileId.toString()}?t=${Date.now()}`,
-                placeholderUrl: `/proxy/chat-pictures/${placeholderImgId.toString()}`
-              });
-
-              await message.save();
-
-              // ✅ Update sender/receiver user data
-              const recipientUser = await User.findById(receiverId);
-              const senderUser = await User.findById(senderId);
-
-              // ✅ Track unread only if recipient is offline
-              senderUser.lastMessage = content;
-              senderUser.lastMessageCount = (senderUser.lastMessageCount || 0) + 1;
-
-              // ✅ Add to or update UnreadMsg collection
-              let unreadEntry = await UnreadMsg.findOne({
-                recipient: receiverId,
-                sender: senderId
-              });
-
-              if (!unreadEntry) {
-                unreadEntry = new UnreadMsg({
-                  recipient: recipientUser,
-                  sender: senderUser,
-                  count: 1,
-                  lastMessage: content
-                });
-              } else {
-                unreadEntry.count += 1;
-                unreadEntry.lastMessage = content;
-              }
-
-              await unreadEntry.save();
-              console.log('Saved successfully to Unread messages');
-
-              // Attach to user if not already present
-              if (!recipientUser.unread.includes(unreadEntry._id)) {
-                recipientUser.unread.push(unreadEntry._id);
-                await recipientUser.save();
-              }
-
-              // ✅ Populate sender/receiver for frontend
-              message = await message.populate([
-                {
-                  path: 'sender',
-                  select: 'username picture isOnline lastMessage lastMessageCount'
-                },
-                { path: 'receiver', select: 'username picture isOnline' }
-              ]);
-
-              chat.messages.push(message._id);
-              await chat.save();
-
-              // ✅ Emit to both users
-              [senderId, receiverId].forEach((id) => {
-                io.to(id).emit('newMessage', {
-                  _id: message._id,
-                  chatId: chat._id,
-                  sender: message.sender,
-                  receiver: message.receiver,
-                  content: message.content,
-                  createdAt: message.createdAt,
-                  updatedAt: message.updatedAt,
+              if (fileId) {
+                message = new ChatMessage({
+                  chat: chat._id,
+                  sender: senderId,
+                  receiver: receiverId,
+                  content,
                   hasImage: true,
-                  // imageId: fileId,
-                  placeholderImgId: placeholderImgId || '',
-                  imageUrl: message.imageUrl || '',
-                  placeholderUrl: message.placeholderUrl || '', // ✅ send placeholder to client
-                  lastMessage: content,
-                  unreadCounts: recipientUser.unreadCounts,
-                  unreadMsgs: recipientUser.unread
+                  imageFileId: fileId,
+                  placeholderImgId, // ✅ new field
+                  imageUrl: `/proxy/chat-pictures/${fileId.toString()}?t=${Date.now()}`,
+                  placeholderUrl: `/proxy/chat-pictures/${placeholderImgId.toString()}`
                 });
-              });
+
+                await message.save();
+
+                // ✅ Update sender/receiver user data
+                const recipientUser = await User.findById(receiverId);
+                const senderUser = await User.findById(senderId);
+
+                // ✅ Track unread only if recipient is offline
+                senderUser.lastMessage = content;
+                senderUser.lastMessageCount = (senderUser.lastMessageCount || 0) + 1;
+
+                // ✅ Add to or update UnreadMsg collection
+                let unreadEntry = await UnreadMsg.findOne({
+                  recipient: receiverId,
+                  sender: senderId
+                });
+
+                if (!unreadEntry) {
+                  unreadEntry = new UnreadMsg({
+                    recipient: recipientUser,
+                    sender: senderUser,
+                    count: 1,
+                    lastMessage: content
+                  });
+                } else {
+                  unreadEntry.count += 1;
+                  unreadEntry.lastMessage = content;
+                }
+
+                await unreadEntry.save();
+                console.log('Saved successfully to Unread messages');
+
+                // Attach to user if not already present
+                if (!recipientUser.unread.includes(unreadEntry._id)) {
+                  recipientUser.unread.push(unreadEntry._id);
+                  await recipientUser.save();
+                }
+
+                // // ✅ Populate sender/receiver for frontend
+                message = await message.populate([
+                  {
+                    path: 'sender',
+                    select: 'username picture isOnline lastMessage lastMessageCount'
+                  },
+                  { path: 'receiver', select: 'username picture isOnline' }
+                ]);
+
+                chat.messages.push(message._id);
+                await chat.save();
+
+                // ✅ Emit to both users
+                [senderId, receiverId].forEach((id) => {
+                  io.to(id).emit('newMessage', {
+                    _id: message._id,
+                    chatId: chat._id,
+                    sender: message.sender,
+                    receiver: message.receiver,
+                    content: message.content,
+                    createdAt: message.createdAt,
+                    updatedAt: message.updatedAt,
+                    hasImage: true,
+                    imageFileId: fileId || '',
+                    // imageId: fileId,
+                    placeholderImgId: placeholderImgId || '',
+                    imageUrl: message.imageUrl || '',
+                    placeholderUrl: message.placeholderUrl || '', // ✅ send placeholder to client
+                    lastMessage: content,
+                    unreadCounts: recipientUser.unreadCounts,
+                    unreadMsgs: recipientUser.unread
+                  });
+                });
+              }
             });
           });
         }

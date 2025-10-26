@@ -176,6 +176,8 @@ export type ChatMessage = {
   imageUrl: string;
   placeholderUrl: string;
   hasImage: boolean;
+  placeholderImgId: string;
+  imageFileId: unknown | string;
   // unreadCounts: recipientUser.unreadCounts,
   // unreadMsgs: recipientUser.unread
 };
@@ -268,7 +270,9 @@ export type Message = {
   senderName?: string | undefined;
   receiverName?: string;
   imageUrl: string;
+  imageFileId: unknown | string;
   placeholderUrl: string;
+  placeholderImgId: string;
   hasImage: boolean;
 };
 
