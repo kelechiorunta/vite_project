@@ -9,7 +9,7 @@ export default defineConfig({
       '/proxy': {
         target: 'http://localhost:3302',
         changeOrigin: true,
-        secure: false
+        secure: false // dev mode
       }
     }
   }
