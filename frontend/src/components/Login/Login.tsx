@@ -79,7 +79,7 @@ const Login: React.FC<LoginProps> = ({
           justify="between"
           style={{ width: 'min(100%, 860px)', marginBottom: '24px' }}
         >
-          <Heading size="4">Welcome back</Heading>
+          <Heading size="4">JustChat</Heading>
           <Flex align="center" gap="2">
             <Text size="2" color="gray">
               Theme
