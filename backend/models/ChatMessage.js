@@ -7,7 +7,7 @@ const chatMessageSchema = new mongoose.Schema(
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     content: { type: String, required: true },
     hasImage: { type: Boolean, default: false },
-    // imageFileId: { type: mongoose.Schema.Types.ObjectId, ref: 'ChatPicture', required: false },
+    imageFileId: { type: mongoose.Schema.Types.ObjectId, ref: 'ChatPicture', required: false },
     imageUrl: { type: String, required: false },
     placeholderImgId: { type: mongoose.Schema.Types.ObjectId, required: false },
     placeholderUrl: { type: String, required: false },

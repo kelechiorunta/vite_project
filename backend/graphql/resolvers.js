@@ -162,6 +162,8 @@ const resolvers = {
                   ? 'https://vite-project-kjia.onrender.com'
                   : 'http://localhost:3302'
               }/proxy/chat-pictures/${msg.imageFileId.toString()}?t=${Date.now()}`
+            : msg.imageUrl && msg.imageUrl.length > 0
+            ? msg.imageUrl
             : null,
           placeholderUrl: msg.placeholderImgId
             ? `${

@@ -55,6 +55,7 @@ type ChatMessage {
   createdAt: String
   updatedAt: String
   imageUrl: String
+  imageFileId: ID
   placeholderImgId: String
   placeholderUrl: String
   hasImage: Boolean
@@ -83,6 +84,7 @@ type Message {
   createdAt: String
   updatedAt: String
   imageUrl: String
+  imageFileId: ID
   placeholderImgId: String
   placeholderUrl: String
   hasImage: Boolean
