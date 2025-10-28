@@ -251,6 +251,15 @@ export type SendGroupMessageVars = {
   groupId: string;
   sender: string;
   content: string;
+  hasFile: boolean;
+  file: FileInput | null;
+};
+
+export type FileInput = {
+  name: unknown | string;
+  type: unknown | string;
+  size: unknown | number;
+  data: unknown | string; // URL or GridFS reference
 };
 
 export type OnlineUser = { _id: string };
@@ -590,17 +599,43 @@ const Home: React.FC = () => {
   const handleSendGroupChat = async () => {
     if (socket && input?.trim() && selectedGroup) {
       try {
+        let base64File: unknown | string = null;
+
+        if (selectedImage) {
+          const reader = new FileReader();
+
+          // Convert image to base64 string
+          base64File = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(selectedImage);
+          });
+        }
+
         const { data } = await sendGroupMessage({
           variables: {
             groupId: selectedGroup?._id as string,
             sender: authUser?._id as string,
-            content: input
+            content: input,
+            hasFile: !!selectedImage,
+            file: selectedImage
+              ? {
+                  name: selectedImage.name,
+                  type: selectedImage.type,
+                  size: selectedImage.size,
+                  data:
+                    typeof base64File === 'string' && base64File !== null
+                      ? base64File?.split(',')[1]
+                      : '' // strip "data:image/png;base64,"
+                }
+              : null
           }
         });
 
         const newGroupMsg = data?.sendGroupMessage;
         if (!newGroupMsg) return;
         setMessages((prev) => [...(prev as Message[]), newGroupMsg]);
+        setSelectedImage(null);
         setInput('');
       } catch (error) {
         console.error('Failed to send message:', error);
@@ -737,6 +772,7 @@ const Home: React.FC = () => {
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
                 handleSelectedImage={handleSelectedImage}
+                selectedImage={selectedImage}
               />
             </Box>
           ) : (
@@ -809,6 +845,7 @@ const Home: React.FC = () => {
                 typingUsers={typingUsers}
                 onlineUsers={onlineUsers}
                 handleSelectedImage={handleSelectedImage}
+                selectedImage={selectedImage}
               />
             </Box>
           </>

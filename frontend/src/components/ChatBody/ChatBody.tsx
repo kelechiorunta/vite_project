@@ -198,8 +198,8 @@
 // export default ChatBody;
 
 import * as React from 'react';
-import { Flex, Text, TextField, IconButton, Avatar } from '@radix-ui/themes';
-import { PaperPlaneIcon, ImageIcon } from '@radix-ui/react-icons'; // ✅ import ImageIcon
+import { Flex, Text, TextField, IconButton, Avatar, Card } from '@radix-ui/themes';
+import { PaperPlaneIcon, ImageIcon, Cross2Icon } from '@radix-ui/react-icons'; // ✅ import ImageIcon
 import { ChatHeader } from '../ChatHeader/ChatHeader';
 import type { AuthContextType, ChatMessage, Message } from '../Home/Home';
 import { useTheme } from '../theme-context';
@@ -215,6 +215,7 @@ const ChatBody: React.FC<{
   handleSend: () => void;
   handleGroupSend: () => void;
   handleSelectedImage: (image: File | null) => void;
+  selectedImage: File | null;
   input: string;
   handleInput: (id: string) => void;
   typingUsers: Set<string>;
@@ -229,7 +230,8 @@ const ChatBody: React.FC<{
   handleInput,
   typingUsers,
   onlineUsers,
-  handleSelectedImage
+  handleSelectedImage,
+  selectedImage
 }) => {
   const chatEndRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -239,18 +241,18 @@ const ChatBody: React.FC<{
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   React.useEffect(scrollToBottom, [messages, typingUsers]);
-  // const [_previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
 
-  // // ✅ Create preview whenever a new file is selected
-  // React.useEffect(() => {
-  //   if (selectedImage) {
-  //     const url = URL.createObjectURL(selectedImage);
-  //     setPreviewUrl(url);
-  //     return () => URL.revokeObjectURL(url);
-  //   } else {
-  //     setPreviewUrl(null);
-  //   }
-  // }, [selectedImage]);
+  // ✅ Create preview whenever a new file is selected
+  React.useEffect(() => {
+    if (selectedImage) {
+      const url = URL.createObjectURL(selectedImage);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [selectedImage]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -262,10 +264,10 @@ const ChatBody: React.FC<{
     }
   };
 
-  // const handleRemoveImage = () => {
-  //   handleSelectedImage(null);
-  //   setPreviewUrl(null);
-  // };
+  const handleRemoveImage = () => {
+    handleSelectedImage(null);
+    setPreviewUrl(null);
+  };
 
   return (
     <Flex direction="column" style={{ flex: 1, background: 'var(--gray-1)' }}>
@@ -370,7 +372,7 @@ const ChatBody: React.FC<{
         )}
       </Flex>
 
-      {/* {previewUrl && (
+      {previewUrl && (
         <Flex
           justify="start"
           align="center"
@@ -379,7 +381,9 @@ const ChatBody: React.FC<{
           style={{
             borderTop: '1px solid var(--gray-a4)',
             background: 'var(--gray-2)',
-            position: 'relative'
+            position: 'absolute',
+            bottom: 70
+            // left: 100
           }}
         >
           <Card
@@ -411,7 +415,7 @@ const ChatBody: React.FC<{
             </IconButton>
           </Card>
         </Flex>
-      )} */}
+      )}
 
       {/* ✅ Input with Image Attach */}
       <Flex p="3" gap="2" align="center" style={{ borderTop: '1px solid var(--gray-a5)' }}>
