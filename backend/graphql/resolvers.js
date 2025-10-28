@@ -7,7 +7,7 @@ import ChatMessage from '../models/ChatMessage.js';
 import sharp from 'sharp';
 import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+// import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 
 const formatUnreadCounts = (unreadMap) => {
   if (!(unreadMap instanceof Map)) return [];
@@ -19,7 +19,7 @@ const formatUnreadCounts = (unreadMap) => {
 };
 
 const resolvers = {
-  Upload: GraphQLUpload,
+  // Upload: GraphQLUpload,
 
   Query: {
     users: async (_, args, context) => {

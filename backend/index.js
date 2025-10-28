@@ -9,7 +9,7 @@ import ConnectMongoDBSession from 'connect-mongodb-session';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+// import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 import rateLimitMiddleware from './middleware/rateLimitMiddleware.js';
 import graphqlMiddlewareHandler from './graphql/graphqlHTTPHandler.js';
@@ -85,8 +85,8 @@ app.use(passport.session());
 // For static build in production mode
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'dist')));
 
-//Enable multipart/form-data parsing before graphqlHTTP
-app.use(graphqlUploadExpress({ maxFileSize: 10_000_000, maxFiles: 5 }));
+// //Enable multipart/form-data parsing before graphqlHTTP
+// app.use(graphqlUploadExpress({ maxFileSize: 10_000_000, maxFiles: 5 }));
 
 // Handles rate limits per user
 app.use(rateLimitMiddleware);
