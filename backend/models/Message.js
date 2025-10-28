@@ -10,7 +10,12 @@ const messageSchema = new mongoose.Schema({
   receiverName: { type: String, required: false },
   senderAvatar: { type: String, required: false },
   receiverAvatar: { type: String, required: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  hasImage: { type: Boolean, required: false },
+  imageFileId: { type: mongoose.Schema.Types.ObjectId, ref: 'ChatPicture', required: false },
+  placeholderImgId: { type: mongoose.Schema.Types.ObjectId, required: false },
+  imageUrl: { type: String, required: false },
+  placeholderUrl: { type: String, required: false }
 });
 
 messageSchema.pre('save', async function (next) {

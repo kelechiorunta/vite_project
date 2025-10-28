@@ -136,14 +136,31 @@ export const GET_UNREAD = gql`
 
 // ✅ 2. Mutation: Send group message
 export const SEND_GROUP_MESSAGE = gql`
-  mutation SendGroupMessage($groupId: ID!, $sender: ID!, $content: String!) {
-    sendGroupMessage(groupId: $groupId, sender: $sender, content: $content) {
+  mutation SendGroupMessage(
+    $groupId: ID!
+    $sender: ID!
+    $content: String!
+    $hasFile: Boolean
+    $file: FileInput
+  ) {
+    sendGroupMessage(
+      groupId: $groupId
+      sender: $sender
+      content: $content
+      hasFile: $hasFile
+      file: $file
+    ) {
       _id
       content
       sender
       senderName
       senderAvatar
       createdAt
+      hasImage
+      imageFileId
+      placeholderImgId
+      imageUrl
+      placeholderUrl
     }
   }
 `;

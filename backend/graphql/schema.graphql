@@ -1,3 +1,5 @@
+scalar Upload
+
 type Query {
   users: [User]!
   auth: User
@@ -8,7 +10,13 @@ type Query {
 }
 
 type Mutation {
-  sendGroupMessage(groupId: ID!, sender: ID!, content: String!): Message!
+  sendGroupMessage(
+    groupId: ID!
+    sender: ID!
+    content: String!
+    hasFile: Boolean
+    file: FileInput
+  ): Message!
 }
 
 type User {
@@ -35,8 +43,26 @@ type Group {
   username: String
   picture: String
   placeholderString: String
+  hasFile: Boolean
+  file: File
   logo: ID
   createdAt: String
+}
+
+type File {
+  _id: ID
+  name: String
+  type: String
+  size: Int
+  url: String
+  placeholderUrl: String
+}
+
+input FileInput {
+  name: String!
+  type: String!
+  size: Int
+  data: String!
 }
 
 type UnreadResult {

@@ -4,6 +4,10 @@ import UnreadMsg from '../models/UnreadMsg.js';
 import Group from '../models/Group.js';
 import Message from '../models/Message.js';
 import ChatMessage from '../models/ChatMessage.js';
+import sharp from 'sharp';
+import mongoose from 'mongoose';
+import { GridFSBucket } from 'mongodb';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 
 const formatUnreadCounts = (unreadMap) => {
   if (!(unreadMap instanceof Map)) return [];
@@ -15,6 +19,8 @@ const formatUnreadCounts = (unreadMap) => {
 };
 
 const resolvers = {
+  Upload: GraphQLUpload,
+
   Query: {
     users: async (_, args, context) => {
       if (!context?.user) return [];
@@ -161,7 +167,12 @@ const resolvers = {
                 process.env.NODE_ENV === 'production'
                   ? 'https://vite-project-kjia.onrender.com'
                   : 'http://localhost:3302'
-              }/proxy/chat-pictures/${msg.imageFileId.toString()}?t=${Date.now()}`
+              }/proxy/chat-pictures/${msg.imageFileId.toString()}?t=${Date.now()}` ||
+              `${
+                process.env.NODE_ENV === 'production'
+                  ? 'https://vite-project-kjia.onrender.com'
+                  : 'http://localhost:3302'
+              }/proxy/chat-pictures/group/${msg.imageFileId.toString()}?t=${Date.now()}`
             : msg.imageUrl && msg.imageUrl.length > 0
             ? msg.imageUrl
             : null,
@@ -170,7 +181,12 @@ const resolvers = {
                 process.env.NODE_ENV === 'production'
                   ? 'https://vite-project-kjia.onrender.com'
                   : 'http://localhost:3302'
-              }/proxy/chat-pictures/${msg.placeholderImgId.toString()}?t=${Date.now()}`
+              }/proxy/chat-pictures/${msg.placeholderImgId.toString()}?t=${Date.now()}` ||
+              `${
+                process.env.NODE_ENV === 'production'
+                  ? 'https://vite-project-kjia.onrender.com'
+                  : 'http://localhost:3302'
+              }/proxy/chat-pictures/group/${msg.placeholderImgId.toString()}?t=${Date.now()}`
             : null
         }));
 
@@ -227,22 +243,167 @@ const resolvers = {
   },
 
   Mutation: {
-    // Send a group message and emit event
-    sendGroupMessage: async (_, { groupId, sender, content }, { user }) => {
-      // const user = await User.findById(sender);
-      if (!user) throw new Error('User not found');
+    // // Send a group message and emit event
+    // sendGroupMessage: async (_, { groupId, sender, content }, { user }) => {
+    //   // const user = await User.findById(sender);
+    //   if (!user) throw new Error('User not found');
 
-      const message = await Message.create({
-        content,
-        groupId,
-        sender,
-        senderName: user.username,
-        senderAvatar: user.picture,
-        createdAt: new Date().toISOString()
-      });
+    //   const message = await Message.create({
+    //     content,
+    //     groupId,
+    //     sender,
+    //     senderName: user.username,
+    //     senderAvatar: user.picture,
+    //     createdAt: new Date().toISOString()
+    //   });
 
-      return message;
+    //   return message;
+    // },
+
+    // LAST CODE BEFORE UPLOAD. REVERT IF NEEDED
+    sendGroupMessage: async (_, { groupId, sender, content, hasFile, file }, { user }) => {
+      try {
+        // Validate sender
+        const senderUser = user || (await User.findById(sender));
+        if (!senderUser) throw new Error('User not found');
+
+        let fileId = null;
+        let placeholderImgId = null;
+        let imageUrl = null;
+        let placeholderUrl = null;
+
+        // ✅ Handle file upload if hasFile is true
+        if (hasFile && file) {
+          const db = mongoose.connection.db;
+          const bucket = new GridFSBucket(db, { bucketName: 'chatPictures' });
+
+          // Convert Base64 → Buffer
+          const buffer = Buffer.from(file.data, 'base64');
+
+          // Create small blurred placeholder
+          const placeholderBuffer = await sharp(buffer).resize({ width: 20 }).blur().toBuffer();
+
+          // Upload main image
+          const uploadMain = await new Promise((resolve, reject) => {
+            const uploadStream = bucket.openUploadStream(file.name, {
+              contentType: file.type,
+              metadata: { sender, groupId, type: 'main' }
+            });
+            uploadStream.end(buffer);
+            uploadStream.on('finish', () => resolve(uploadStream.id));
+            uploadStream.on('error', reject);
+          });
+
+          fileId = uploadMain;
+
+          // Upload placeholder image
+          const uploadPlaceholder = await new Promise((resolve, reject) => {
+            const placeholderStream = bucket.openUploadStream(`${file.name}-placeholder`, {
+              contentType: file.type,
+              metadata: { sender, groupId, type: 'placeholder' }
+            });
+            placeholderStream.end(placeholderBuffer);
+            placeholderStream.on('finish', () => resolve(placeholderStream.id));
+            placeholderStream.on('error', reject);
+          });
+
+          placeholderImgId = uploadPlaceholder;
+
+          // Build URLs for client to fetch later
+          imageUrl = `/proxy/chat-pictures/${fileId.toString()}?t=${Date.now()}`;
+          placeholderUrl = `/proxy/chat-pictures/${placeholderImgId.toString()}`;
+        }
+
+        // ✅ Create and save the message
+        const message = await Message.create({
+          groupId,
+          sender,
+          senderName: senderUser.username,
+          senderAvatar: senderUser.picture,
+          content,
+          hasImage: !!hasFile,
+          imageFileId: fileId,
+          placeholderImgId,
+          imageUrl,
+          placeholderUrl,
+          createdAt: new Date().toISOString()
+        });
+
+        return message;
+      } catch (error) {
+        console.error('❌ Error sending group message:', error);
+        throw new Error('Failed to send group message');
+      }
     }
+
+    // FAILED TO INSTALL CREATEUPLOADLINK IN APOLLO CLIENT. Dependency issues.
+    // sendGroupMessage: async (_, { groupId, sender, content, hasFile, file }, { user }) => {
+    //   if (!user) throw new Error('User not found');
+
+    //   let fileId = null;
+    //   let placeholderImgId = null;
+    //   let message = null;
+
+    //   if (hasFile && file) {
+    //     const { createReadStream, filename, mimetype } = await file;
+    //     const stream = createReadStream();
+
+    //     const chunks = [];
+    //     for await (const chunk of stream) {
+    //       chunks.push(chunk);
+    //     }
+    //     const buffer = Buffer.concat(chunks);
+
+    //     const db = mongoose.connection.db;
+    //     const bucket = new GridFSBucket(db, { bucketName: 'chatPictures' });
+
+    //     const placeholderBuffer = await sharp(buffer).resize({ width: 20 }).blur().toBuffer();
+
+    //     const uploadStream = bucket.openUploadStream(filename, {
+    //       contentType: mimetype,
+    //       metadata: { senderId: sender, groupId }
+    //     });
+
+    //     uploadStream.end(buffer);
+
+    //     await new Promise((resolve) => uploadStream.on('finish', resolve));
+    //     fileId = uploadStream.id;
+
+    //     const placeholderStream = bucket.openUploadStream(`${filename}-placeholder`, {
+    //       contentType: mimetype,
+    //       metadata: { senderId: sender, groupId, placeholder: true }
+    //     });
+
+    //     placeholderStream.end(placeholderBuffer);
+
+    //     await new Promise((resolve) => placeholderStream.on('finish', resolve));
+    //     placeholderImgId = placeholderStream.id;
+
+    //     message = await Message.create({
+    //       groupId,
+    //       sender,
+    //       content,
+    //       hasImage: true,
+    //       imageFileId: fileId,
+    //       placeholderImgId,
+    //       imageUrl: `/proxy/chat-pictures/${fileId.toString()}`,
+    //       placeholderUrl: `/proxy/chat-pictures/${placeholderImgId.toString()}`,
+    //       createdAt: new Date().toISOString()
+    //     });
+
+    //     return message;
+    //   }
+
+    //   // Text-only message
+    //   return await Message.create({
+    //     groupId,
+    //     sender,
+    //     content,
+    //     hasImage: false,
+    //     createdAt: new Date().toISOString()
+    //   });
+    // }
+
     // updateProfile: async (_, { input }, { user, ioInstance }) => {
     //   if (!user) throw new Error('Not authenticated');
 
