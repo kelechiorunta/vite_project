@@ -8,6 +8,8 @@ import UnreadMsg from '../models/UnreadMsg.js';
 import { GridFSBucket } from 'mongodb';
 import sharp from 'sharp';
 import mongoose from 'mongoose';
+import Group from '../models/Group.js';
+import Message from '../models/Message.js';
 
 const configureSocket = (app, corsOptions, PORT) => {
   const server = createServer(app);
@@ -349,6 +351,113 @@ const configureSocket = (app, corsOptions, PORT) => {
         }
       } catch (error) {
         console.error('❌ sendMessage error:', error);
+      }
+    });
+
+    socket.on('sendGroupMessage', async ({ groupId, content, hasFile, file }) => {
+      const senderId = socket.data.userId;
+      if (!senderId || !groupId || !content) return;
+
+      try {
+        // ✅ Validate group and sender
+        const group = await Group.findById(groupId).populate('members');
+        if (!group) throw new Error('Group not found');
+
+        const senderUser = await User.findById(senderId);
+        if (!senderUser) throw new Error('Sender not found');
+
+        let fileId = null;
+        let placeholderImgId = null;
+        let imageUrl = null;
+        let placeholderUrl = null;
+
+        // ✅ Handle file upload (GridFS + Sharp)
+        if (hasFile && file) {
+          const db = mongoose.connection.db;
+          const bucket = new GridFSBucket(db, { bucketName: 'chatPictures' });
+
+          // Convert Base64 → Buffer
+          const buffer = Buffer.from(file.data, 'base64');
+
+          // Create small blurred placeholder
+          const placeholderBuffer = await sharp(buffer).resize({ width: 20 }).blur().toBuffer();
+
+          // Upload main image
+          const uploadMain = await new Promise((resolve, reject) => {
+            const uploadStream = bucket.openUploadStream(file.name, {
+              contentType: file.type,
+              metadata: { sender: senderId, groupId, type: 'main' }
+            });
+            uploadStream.end(buffer);
+            uploadStream.on('finish', () => resolve(uploadStream.id));
+            uploadStream.on('error', reject);
+          });
+
+          fileId = uploadMain;
+
+          // Upload placeholder image
+          const uploadPlaceholder = await new Promise((resolve, reject) => {
+            const placeholderStream = bucket.openUploadStream(`${file.name}-placeholder`, {
+              contentType: file.type,
+              metadata: { sender: senderId, groupId, type: 'placeholder' }
+            });
+            placeholderStream.end(placeholderBuffer);
+            placeholderStream.on('finish', () => resolve(placeholderStream.id));
+            placeholderStream.on('error', reject);
+          });
+
+          placeholderImgId = uploadPlaceholder;
+
+          // Build URLs for client to fetch later
+          imageUrl = `/proxy/chat-pictures/${fileId.toString()}?t=${Date.now()}`;
+          placeholderUrl = `/proxy/chat-pictures/${placeholderImgId.toString()}`;
+        }
+
+        // ✅ Create and save the message in DB
+        const message = await Message.create({
+          groupId,
+          sender: senderUser._id,
+          senderName: senderUser.username,
+          senderAvatar: senderUser.picture,
+          content,
+          hasImage: !!hasFile,
+          imageFileId: fileId,
+          placeholderImgId,
+          imageUrl,
+          placeholderUrl,
+          createdAt: new Date().toISOString()
+        });
+
+        // ✅ Add message to group
+        group.messages = group.messages || [];
+        group.messages.push(message._id);
+        await group.save();
+
+        // ✅ Populate sender for front-end
+        const populatedMsg = await message.populate({
+          path: 'sender',
+          select: 'username picture isOnline'
+        });
+
+        // ✅ Emit message to all group members
+        group.members.forEach((member) => {
+          io.to(member._id.toString()).emit('newGroupMessage', {
+            _id: populatedMsg._id,
+            groupId: group._id,
+            sender: populatedMsg.sender || senderId,
+            senderName: populatedMsg.senderName,
+            senderAvatar: populatedMsg.senderAvatar,
+            content: populatedMsg.content,
+            hasImage: populatedMsg.hasImage,
+            imageUrl: populatedMsg.imageUrl,
+            placeholderUrl: populatedMsg.placeholderUrl,
+            createdAt: populatedMsg.createdAt
+          });
+        });
+
+        console.log(`📨 Group message sent in ${group.name} by ${senderUser.username}`);
+      } catch (error) {
+        console.error('❌ sendGroupMessage error:', error);
       }
     });
 
