@@ -484,6 +484,60 @@ const Home: React.FC = () => {
       }
     });
 
+    socket.on('newGroupMessage', (msg: Message) => {
+      const isSender = msg?.sender === authUser?._id;
+
+      // ✅ If the user is in the current group chat
+      if (selectedGroup && msg.groupId === selectedGroup._id && isSender) {
+        setMessages((prev) => [...(prev as Message[]), msg]);
+
+        // ✅ Update Apollo cache for FETCH_GROUP_MSGS
+        try {
+          const existing = client.readQuery<FetchGroupData>({
+            query: FETCH_GROUP_MSGS,
+            variables: { groupId: selectedGroup._id, limit: 30 }
+          });
+
+          if (existing?.fetchGroupMsgs?.messages) {
+            client.writeQuery<FetchGroupData>({
+              query: FETCH_GROUP_MSGS,
+              variables: { groupId: selectedGroup._id, limit: 30 },
+              data: {
+                fetchGroupMsgs: {
+                  ...existing.fetchGroupMsgs,
+                  messages: [...existing.fetchGroupMsgs.messages, msg]
+                }
+              }
+            });
+          }
+        } catch (err) {
+          console.warn('Cache update skipped (no existing messages yet):', err);
+        }
+      } else {
+        // ✅ If the message belongs to a different group, update unread counts
+        if (msg.sender !== authUser?._id) {
+          setUnreadMap((prev) => {
+            const senderId =
+              typeof msg?.sender === 'string' ? msg.sender : msg.sender?._id?.toString?.();
+
+            if (!senderId) return prev;
+
+            const prevCount = prev[senderId]?.count || 0;
+
+            return {
+              ...prev,
+              [senderId]: {
+                count: prevCount + 1,
+                lastMessage: msg.content || '',
+                timeStamp: new Date().toISOString(),
+              }
+            };
+          });
+        }
+      }
+    });
+  
+
     socket.on('userOnline', ({ userId, online }) => {
       setOnlineUsers((prev) => new Set(prev).add(userId));
       setIsOnline(online);
@@ -520,12 +574,13 @@ const Home: React.FC = () => {
 
     return () => {
       socket.off('newMessage');
+      socket.off('newGroupMessage');
       socket.off('userOnline');
       socket.off('userOffline');
       socket.off('isConnected');
       socket.off('typingIndication');
     };
-  }, [selectedContact?._id, socket, user?._id, users, selectedChat, typingUsers, client]); // ✅ Run only o
+  }, [selectedContact?._id, socket, user?._id, users, selectedChat, typingUsers, client, authUser?._id, selectedGroup]); // ✅ Run only o
 
   const handleSelectedImage = (image: File | null) => {
     setSelectedImage(image);
@@ -595,53 +650,91 @@ const Home: React.FC = () => {
     }
   };
 
-  // Send group messages from sender
-  const handleSendGroupChat = async () => {
+  const handleSendGroupChat = () => {
     if (socket && input?.trim() && selectedGroup) {
-      try {
-        let base64File: unknown | string = null;
+      const payload = {
+        content: input,
+        groupId: selectedGroup?._id,
+        sender: authUser?._id
+      };
 
-        if (selectedImage) {
-          const reader = new FileReader();
+      // ✅ handle file upload
+      if (selectedImage) {
+        const file = selectedImage;
+        const reader = new FileReader();
 
-          // Convert image to base64 string
-          base64File = await new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(selectedImage);
+        reader.onload = () => {
+          socket.emit('sendGroupMessage', {
+            ...payload,
+            hasFile: true,
+            file: {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              data: reader.result
+            }
           });
-        }
 
-        const { data } = await sendGroupMessage({
-          variables: {
-            groupId: selectedGroup?._id as string,
-            sender: authUser?._id as string,
-            content: input,
-            hasFile: !!selectedImage,
-            file: selectedImage
-              ? {
-                  name: selectedImage.name,
-                  type: selectedImage.type,
-                  size: selectedImage.size,
-                  data:
-                    typeof base64File === 'string' && base64File !== null
-                      ? base64File?.split(',')[1]
-                      : '' // strip "data:image/png;base64,"
-                }
-              : null
-          }
-        });
+          // Clear file after sending
+          setSelectedImage(null);
+        };
 
-        const newGroupMsg = data?.sendGroupMessage;
-        if (!newGroupMsg) return;
-        setMessages((prev) => [...(prev as Message[]), newGroupMsg]);
-        setSelectedImage(null);
-        setInput('');
-      } catch (error) {
-        console.error('Failed to send message:', error);
+        reader.readAsArrayBuffer(file);
+      } else {
+        socket.emit('sendGroupMessage', payload);
       }
+
+      setInput('');
     }
   };
+
+  // // Send group messages from sender
+  // const handleSendGroupChat = async () => {
+  //   if (socket && input?.trim() && selectedGroup) {
+  //     try {
+  //       let base64File: unknown | string = null;
+
+  //       if (selectedImage) {
+  //         const reader = new FileReader();
+
+  //         // Convert image to base64 string
+  //         base64File = await new Promise((resolve, reject) => {
+  //           reader.onload = () => resolve(reader.result);
+  //           reader.onerror = reject;
+  //           reader.readAsDataURL(selectedImage);
+  //         });
+  //       }
+
+  //       const { data } = await sendGroupMessage({
+  //         variables: {
+  //           groupId: selectedGroup?._id as string,
+  //           sender: authUser?._id as string,
+  //           content: input,
+  //           hasFile: !!selectedImage,
+  //           file: selectedImage
+  //             ? {
+  //                 name: selectedImage.name,
+  //                 type: selectedImage.type,
+  //                 size: selectedImage.size,
+  //                 data:
+  //                   typeof base64File === 'string' && base64File !== null
+  //                     ? base64File?.split(',')[1]
+  //                     : '' // strip "data:image/png;base64,"
+  //               }
+  //             : null
+  //         }
+  //       });
+
+  //       const newGroupMsg = data?.sendGroupMessage;
+  //       if (!newGroupMsg) return;
+  //       setMessages((prev) => [...(prev as Message[]), newGroupMsg]);
+  //       setSelectedImage(null);
+  //       setInput('');
+  //     } catch (error) {
+  //       console.error('Failed to send message:', error);
+  //     }
+  //   }
+  // };
 
   const emitTyping = debounce((receiverId: string | unknown) => {
     if (socket && receiverId && user?._id) {

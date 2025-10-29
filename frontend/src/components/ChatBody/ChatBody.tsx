@@ -317,7 +317,9 @@ const ChatBody: React.FC<{
                   'username' in m.sender &&
                   typeof m.sender?.username === 'string'
                     ? m.sender.username[0]
-                    : '?'
+                    : m.senderName !== null && typeof m.senderName === 'string'
+                      ? m.senderName[0]
+                      : '?'
                 }
                 radius="full"
                 size="3"
