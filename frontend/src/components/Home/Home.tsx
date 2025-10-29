@@ -485,13 +485,13 @@ const Home: React.FC = () => {
     });
 
     socket.on('newGroupMessage', (msg: Message) => {
-      const isSender = msg?.sender === authUser?._id;
+      // const isSender = msg?.sender === authUser?._id;
 
-      // ✅ If the user is in the current group chat
-      if (selectedGroup && msg.groupId === selectedGroup._id && isSender) {
+      // If the user is in the current group chat
+      if (selectedGroup && msg.groupId === selectedGroup._id) {
         setMessages((prev) => [...(prev as Message[]), msg]);
 
-        // ✅ Update Apollo cache for FETCH_GROUP_MSGS
+        //Update Apollo cache for FETCH_GROUP_MSGS
         try {
           const existing = client.readQuery<FetchGroupData>({
             query: FETCH_GROUP_MSGS,
@@ -514,11 +514,10 @@ const Home: React.FC = () => {
           console.warn('Cache update skipped (no existing messages yet):', err);
         }
       } else {
-        // ✅ If the message belongs to a different group, update unread counts
+        // If the message belongs to a different group, update unread counts
         if (msg.sender !== authUser?._id) {
           setUnreadMap((prev) => {
-            const senderId =
-              typeof msg?.sender === 'string' ? msg.sender : msg.sender?._id?.toString?.();
+            const senderId = typeof msg?.sender === 'string' ? msg.sender : msg.receiverId;
 
             if (!senderId) return prev;
 
