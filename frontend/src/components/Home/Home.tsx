@@ -94,7 +94,7 @@
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Theme, Flex, Box, Button } from '@radix-ui/themes';
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client/react';
+import { useQuery, useLazyQuery } from '@apollo/client/react';
 import { io, Socket } from 'socket.io-client';
 import debounce from 'lodash.debounce';
 import { useApolloClient } from '@apollo/client/react';
@@ -105,8 +105,8 @@ import {
   FETCH_CHATS,
   GET_UNREAD,
   FETCH_GROUPS,
-  FETCH_GROUP_MSGS,
-  SEND_GROUP_MESSAGE
+  FETCH_GROUP_MSGS
+  // SEND_GROUP_MESSAGE
 } from '../../graphql/queries/queries';
 
 import IconBar from '../IconBar/IconBar';
@@ -312,34 +312,34 @@ const Home: React.FC = () => {
   });
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null); // ✅ new state
 
-  const [sendGroupMessage] = useMutation<SendGroupMessageData, SendGroupMessageVars>(
-    SEND_GROUP_MESSAGE,
-    {
-      update(cache, { data }) {
-        const newMessage = data?.sendGroupMessage;
-        if (!newMessage || !selectedGroup?._id) return;
+  // const [sendGroupMessage] = useMutation<SendGroupMessageData, SendGroupMessageVars>(
+  //   SEND_GROUP_MESSAGE,
+  //   {
+  //     update(cache, { data }) {
+  //       const newMessage = data?.sendGroupMessage;
+  //       if (!newMessage || !selectedGroup?._id) return;
 
-        const existing = cache.readQuery<FetchGroupData>({
-          query: FETCH_GROUP_MSGS,
-          variables: { groupId: selectedGroup._id, limit: 30 }
-        });
+  //       const existing = cache.readQuery<FetchGroupData>({
+  //         query: FETCH_GROUP_MSGS,
+  //         variables: { groupId: selectedGroup._id, limit: 30 }
+  //       });
 
-        if (existing?.fetchGroupMsgs?.messages) {
-          cache.writeQuery<FetchGroupData>({
-            query: FETCH_GROUP_MSGS,
-            variables: { groupId: selectedGroup._id, limit: 30 },
-            data: {
-              fetchGroupMsgs: {
-                ...existing.fetchGroupMsgs,
-                messages: [...existing.fetchGroupMsgs.messages, newMessage]
-              }
-            }
-          });
-          // setMessages(data?.fetchGroupMsgs);
-        }
-      }
-    }
-  );
+  //       if (existing?.fetchGroupMsgs?.messages) {
+  //         cache.writeQuery<FetchGroupData>({
+  //           query: FETCH_GROUP_MSGS,
+  //           variables: { groupId: selectedGroup._id, limit: 30 },
+  //           data: {
+  //             fetchGroupMsgs: {
+  //               ...existing.fetchGroupMsgs,
+  //               messages: [...existing.fetchGroupMsgs.messages, newMessage]
+  //             }
+  //           }
+  //         });
+  //         // setMessages(data?.fetchGroupMsgs);
+  //       }
+  //     }
+  //   }
+  // );
 
   const [loadChats, { data: _chatData, loading: loadingChats, error: _errorChats }] = useLazyQuery<
     FetchChatsData,
@@ -529,14 +529,13 @@ const Home: React.FC = () => {
               [senderId]: {
                 count: prevCount + 1,
                 lastMessage: msg.content || '',
-                timeStamp: new Date().toISOString(),
+                timeStamp: new Date().toISOString()
               }
             };
           });
         }
       }
     });
-  
 
     socket.on('userOnline', ({ userId, online }) => {
       setOnlineUsers((prev) => new Set(prev).add(userId));
@@ -580,7 +579,17 @@ const Home: React.FC = () => {
       socket.off('isConnected');
       socket.off('typingIndication');
     };
-  }, [selectedContact?._id, socket, user?._id, users, selectedChat, typingUsers, client, authUser?._id, selectedGroup]); // ✅ Run only o
+  }, [
+    selectedContact?._id,
+    socket,
+    user?._id,
+    users,
+    selectedChat,
+    typingUsers,
+    client,
+    authUser?._id,
+    selectedGroup
+  ]); // ✅ Run only o
 
   const handleSelectedImage = (image: File | null) => {
     setSelectedImage(image);
