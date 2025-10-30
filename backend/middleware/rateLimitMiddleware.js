@@ -4,7 +4,9 @@ const rateLimitMiddleware = async (req, res, next) => {
   try {
     const { success } = await rateLimit.limit(req.user?._id);
 
-    if (!success) {
+    const isAllowedRequests = req.url.includes('/proxy/chat-pictures');
+
+    if (!success && !isAllowedRequests) {
       return res
         .status(429)
         .json({ error: 'Rate Limit Exceeded! Please try again after a minute or two!' });
