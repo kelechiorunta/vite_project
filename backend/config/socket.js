@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 import Group from '../models/Group.js';
 import Message from '../models/Message.js';
 
-const configureSocket = (app, corsOptions, PORT) => {
+const configureSocket = (app, corsOptions) => {
   const server = createServer(app);
   const socketOptions = { cors: corsOptions };
   const io = new Server(server, socketOptions);
@@ -501,9 +501,7 @@ const configureSocket = (app, corsOptions, PORT) => {
     });
   });
 
-  server.listen(PORT, () => {
-    console.log(' Socket listening at ws://localhost:3002');
-  });
+  return { server, io };
 };
 
 export default configureSocket;

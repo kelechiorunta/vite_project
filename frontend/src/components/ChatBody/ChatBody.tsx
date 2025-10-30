@@ -309,7 +309,9 @@ const ChatBody: React.FC<{
                   'picture' in m.sender &&
                   m.sender?._id === authUser?._id
                     ? m.sender?.picture
-                    : m.senderAvatar
+                    : typeof m.receiverAvatar === 'object' && m.receiverAvatar !== null
+                      ? m.receiverAvatar
+                      : m.senderAvatar
                 }
                 fallback={
                   typeof m.sender === 'object' &&
