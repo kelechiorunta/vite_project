@@ -104,37 +104,12 @@ app.use('/proxy/chat-pictures', pictureRouter);
 // Handles all graphql queries and mutations
 app.use('/graphql', graphqlMiddlewareHandler);
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(indexFilePath, 'dist', 'index.html'));
 });
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(indexFilePath, 'dist', 'index.html'));
-});
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(indexFilePath, 'dist', 'index.html'));
-});
-
-// app.get('/proxy/api', (req, res, next) => {
-//   try {
-//     if (!req.session.no) {
-//       req.session.no = 0;
-//     }
-//     req.session.no += 1;
-//     next();
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// });
 
 // Socket.io server configuration
-configureSocket(app, corsOptions, PORT);
-
-// app.use((req, res, next) => {
-//   console.log('session no is ', req.session.no);
-//   res.json({ message: 'Proxy is activated.', user: req.user, no: req.session.no });
-// });
-
+const { server, io } = configureSocket(app, corsOptions);
 app.use((err, req, res, next) => {
   console.error(err);
   next(err || { message: 'Something went wrong' });
@@ -143,7 +118,7 @@ app.use((err, req, res, next) => {
 connectDB(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected successfully');
-    app.listen(PORT, () => console.log(`Server is listening at PORT ${PORT}`));
+    server.listen(PORT, () => console.log(`Server is listening at PORT ${PORT}`));
   })
   .catch((err) => console.error(err));
 

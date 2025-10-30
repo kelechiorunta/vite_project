@@ -72,6 +72,7 @@ export const FETCH_CHATS = gql`
         receiver {
           _id
           username
+          picture
         }
       }
       notifiedUser {
