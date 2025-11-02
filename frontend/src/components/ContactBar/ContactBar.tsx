@@ -273,6 +273,7 @@ const ContactBar: React.FC<{
                       <Badge
                         style={{ position: 'absolute', bottom: -4, right: -9, zIndex: 10 }}
                         color="grass"
+                        
                       >
                         ●
                       </Badge>

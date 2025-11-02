@@ -1,7 +1,7 @@
 // SocketNotifications.tsx
 import { useEffect, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client/react';
-import { GET_CONTACTS } from '../../graphql/queries/queries';
+// import { GET_CONTACTS } from '../../graphql/queries/queries';
 import { toast, ToastContainer, type Id } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as RadixToast from '@radix-ui/react-toast';
@@ -19,12 +19,16 @@ type SocketEventPayload = {
 
 interface SocketNotificationsProps {
   socketInstance: Socket | null;
+  handleUpdating?: (update: AuthContextType | null) => void;
 }
 
 /**
  * Combined login/logout/profile notifications from socket events
  */
-const SocketNotifications: React.FC<SocketNotificationsProps> = ({ socketInstance }) => {
+const SocketNotifications: React.FC<SocketNotificationsProps> = ({
+  socketInstance,
+  handleUpdating
+}) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
   const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
   const recentlyUpdatedProfilesRef = useRef<Set<string>>(new Set());
@@ -86,25 +90,30 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({ socketInstanc
       try {
         if (!updatedUser) return;
 
-        const existing = client.readQuery<{ users: User[] }>({ query: GET_CONTACTS });
-        if (existing) {
-          const updatedUsers = existing.users.map((user: User) =>
-            user?._id === updatedUser._id ? { ...user, ...updatedUser } : user
-          );
-          client.writeQuery({
-            query: GET_CONTACTS,
-            data: { users: updatedUsers }
-          });
-        }
+        // const existing = client.readQuery<{ users: User[] }>({ query: GET_CONTACTS });
+        // if (existing) {
+        //   const updatedUsers = existing.users.map((user: User) =>
+        //     user?._id === updatedUser._id ? { ...user, ...updatedUser } : user
+        //   );
+        //   client.writeQuery({
+        //     query: GET_CONTACTS,
+        //     data: { users: updatedUsers }
+        //   });
+        // }
 
         // track to avoid login toast
-        setUpdatedProfileUser(updatedUser);
+
+        if (handleUpdating) {
+          handleUpdating(updatedUser);
+          setUpdatedProfileUser(updatedUser);
+        }
+        console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
         setTimeout(() => {
           recentlyUpdatedProfilesRef.current.delete(updatedUser._id as string);
         }, 3000);
 
-        toast.success(`✅ ${updatedUser.username} updated profile!`, {
+        toast.success(`${updatedUser.username} updated profile!`, {
           position: 'top-right',
           autoClose: 4000,
           pauseOnHover: true,
@@ -126,7 +135,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({ socketInstanc
       socketInstance.off('LoggingOut', handleLoggingOut);
       socketInstance.off('Updating', handleProfileChanged);
     };
-  }, [socketInstance, client]);
+  }, [socketInstance, client, handleUpdating]);
 
   return (
     <>
