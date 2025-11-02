@@ -461,12 +461,12 @@ const configureSocket = (app, corsOptions) => {
       }
     });
 
-    socket.on('ProfileUpdated', ({ updatedUser }) => {
-      if (updatedUser) {
-        // Don't broadcast
-        socket.broadcast.emit('UpdatedProfile', { updatedProfileUser: updatedUser });
-      }
-    });
+    // socket.on('ProfileUpdated', ({ updatedUser }) => {
+    //   if (updatedUser) {
+    //     // Don't broadcast
+    //     socket.broadcast.emit('UpdatedProfile', { updatedProfileUser: updatedUser });
+    //   }
+    // });
 
     // socket.on('typing', ({ receiverId }) => {
     //     const senderId = socket.data.userId;
@@ -475,6 +475,37 @@ const configureSocket = (app, corsOptions) => {
     //     // Emit 'typing' to the receiver's room
     //     io.to(receiverId).emit('typing', { from: senderId });
     // });
+
+    socket.on('profileUpdate', async ({ values }) => {
+      const { username, email, picture, phone, address } = values;
+
+      if (!email || !username) throw new Error('Incomplete entry');
+
+      try {
+        if (email) {
+          const existingEmailUser = await User.findOne({ email });
+
+          if (existingEmailUser) {
+            const updated = await User.findByIdAndUpdate(existingEmailUser._id, values, {
+              new: true,
+              runValidators: true
+            });
+
+            if (updated) {
+              const updatedUser = updated;
+              socket.emit('Updating', { updatedUser });
+              console.log('Updating from server');
+            }
+          }
+        }
+      } catch (err) {
+        return {
+          success: false,
+          message: err.message || 'Failed to update profile',
+          user: null
+        };
+      }
+    });
 
     socket.on('typing', ({ receiverId }) => {
       const senderId = socket.data.userId;

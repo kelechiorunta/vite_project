@@ -13,14 +13,16 @@ import {
 } from '@radix-ui/react-icons';
 import { useTheme } from '../theme-context';
 import type { AuthContextType, TabTypes } from '../Home/Home';
+import AlertProfile from '../AlertProfile/AlertProfile';
 
 interface IconBarProps {
   onOpenContacts?: () => void; // 👈 optional prop
-  authUser: AuthContextType;
+  authUser: AuthContextType | null;
   toggleTab?: (tab: TabTypes) => void;
+  handleProfileUpdate?: (props: AuthContextType) => void;
 }
 
-const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }) => {
+const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab, handleProfileUpdate }) => {
   const [collapsed, setCollapsed] = React.useState(true);
 
   const { toggleTheme, appTheme } = useTheme();
@@ -32,6 +34,10 @@ const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }
       console.error(error);
     }
   };
+
+  // function handleProfileUpdate(props: AuthContextType): void {
+  //   throw new Error('Function not implemented.');
+  // }
 
   return (
     <Flex
@@ -48,7 +54,7 @@ const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }
         <Tooltip content="Me">
           <IconButton variant="ghost" size="3">
             <Avatar
-              src={authUser.picture}
+              src={authUser?.picture}
               fallback={
                 typeof authUser?.username === 'string'
                   ? authUser?.username.charAt(0).toUpperCase()
@@ -100,9 +106,15 @@ const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab }
       </Flex>
       <Flex direction="column" align="center" gap="3" p="3">
         <Tooltip content="Settings">
-          <IconButton variant="ghost" size="3">
-            <GearIcon />
-          </IconButton>
+          <AlertProfile
+            component={
+              <IconButton variant="ghost" size="3">
+                <GearIcon />
+              </IconButton>
+            }
+            user={authUser}
+            handleProfileUpdate={handleProfileUpdate}
+          />
         </Tooltip>
       </Flex>
       <Flex direction="column" align="center" gap="3" p="3">

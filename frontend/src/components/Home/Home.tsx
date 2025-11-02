@@ -296,12 +296,14 @@ const Home: React.FC = () => {
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [_isOnline, setIsOnline] = useState(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+
   const [input, setInput] = useState('');
   const [tab, setTab] = useState<TabTypes>('all');
   const client = useApolloClient();
 
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
   const authUser = useOutletContext<AuthContextType>();
+  const [currentUser, setCurrentUser] = useState<AuthContextType | null>(authUser);
   const { data } = useQuery<{ auth: AuthContextType }>(AUTH);
   const {
     data: contacts,
@@ -558,6 +560,15 @@ const Home: React.FC = () => {
       setOnlineUsers((prev) => new Set(prev).add(currentUser));
     });
 
+    // socket.on('Updating', ({ updatedUser }) => {
+    //   if (updatedUser && updatedUser.length > 0) {
+    //     setCurrentUser(updatedUser);
+    //   }
+
+    //   console.log('Updating now');
+    //   // alert('Yay');
+    // });
+
     socket.on('typingIndication', ({ from }) => {
       setTypingUsers((prev) => new Set(prev).add(from));
 
@@ -577,6 +588,7 @@ const Home: React.FC = () => {
       socket.off('userOffline');
       socket.off('isConnected');
       socket.off('typingIndication');
+      // socket.off('Updating');
     };
   }, [
     selectedContact?._id,
@@ -587,8 +599,21 @@ const Home: React.FC = () => {
     typingUsers,
     client,
     authUser?._id,
-    selectedGroup
-  ]); // ✅ Run only o
+    selectedGroup,
+    currentUser
+  ]);
+
+  const handleUpdating = (update: AuthContextType | null) => {
+    if (update) {
+      setCurrentUser(update);
+    }
+  };
+
+  const handleProfileUpdate = (values: AuthContextType) => {
+    if (values && socket) {
+      socket.emit('profileUpdate', { values });
+    }
+  };
 
   const handleSelectedImage = (image: File | null) => {
     setSelectedImage(image);
@@ -843,9 +868,13 @@ const Home: React.FC = () => {
         }}
       >
         {/* IconBar */}
-        <IconBar authUser={authUser} toggleTab={handleSelectionTab} />
+        <IconBar
+          authUser={currentUser}
+          toggleTab={handleSelectionTab}
+          handleProfileUpdate={handleProfileUpdate}
+        />
 
-        <SocketNotifications socketInstance={socket} />
+        <SocketNotifications socketInstance={socket} handleUpdating={handleUpdating} />
         {isMobile ? (
           selectedContact || selectedGroup ? (
             // Show ChatBody full screen with back button
