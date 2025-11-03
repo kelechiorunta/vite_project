@@ -116,27 +116,27 @@ const ContactBar: React.FC<{
     }
   }, [tab, filtered, groups]);
 
-  // React.useEffect(() => {
-  //   const online = filtered && filtered.filter((user) => onlineUsers.has(user._id as string));
-  //   const offline = filtered && filtered.filter((user) => !onlineUsers.has(user._id as string));
+  React.useEffect(() => {
+    const online = filtered && filtered.filter((user) => onlineUsers.has(user._id as string));
+    const offline = filtered && filtered.filter((user) => !onlineUsers.has(user._id as string));
 
-  //   if (online && offline) {
-  //     const sortedUsers = [
-  //       ...online.sort((a: AuthContextType, b: AuthContextType) => {
-  //         // Handle null/undefined cases defensively
-  //         if (!a && !b) return 0;
-  //         if (!a) return 1;
-  //         if (!b) return -1;
+    if (online && offline && tab === 'all') {
+      const sortedUsers = [
+        ...online.sort((a: AuthContextType, b: AuthContextType) => {
+          // Handle null/undefined cases defensively
+          if (!a && !b) return 0;
+          if (!a) return 1;
+          if (!b) return -1;
 
-  //         // Coerce boolean to number (true = 1, false = 0)
-  //         return Number(b.isOnline) - Number(a.isOnline);
-  //       }),
-  //       ...offline
-  //     ];
+          // Coerce boolean to number (true = 1, false = 0)
+          return Number(b.isOnline) - Number(a.isOnline);
+        }),
+        ...offline
+      ];
 
-  //     setFilteredUsers(sortedUsers);
-  //   }
-  // }, [onlineUsers, filtered]);
+      setFilteredUsers(sortedUsers);
+    }
+  }, [onlineUsers, filtered, tab]);
   return (
     <Flex direction="column" style={{ flex: 1, height: '100%' }}>
       {/* Header: Messages + Filters */}
@@ -273,7 +273,6 @@ const ContactBar: React.FC<{
                       <Badge
                         style={{ position: 'absolute', bottom: -4, right: -9, zIndex: 10 }}
                         color="grass"
-                        
                       >
                         ●
                       </Badge>
