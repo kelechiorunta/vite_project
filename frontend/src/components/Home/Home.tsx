@@ -623,11 +623,11 @@ const Home: React.FC = () => {
     _setSelectedGroup(null);
     setSelectedContact(chatUser);
     // remove unread messages for this user
-    setUnreadMap((prev) => {
-      const updated = { ...prev };
-      delete updated[typeof chatUser?._id === 'string' ? chatUser._id : '?'];
-      return updated;
-    });
+    // setUnreadMap((prev) => {
+    //   const updated = { ...prev };
+    //   delete updated[typeof chatUser?._id === 'string' ? chatUser._id : '?'];
+    //   return updated;
+    // });
 
     try {
       const { data } = await loadChats({
