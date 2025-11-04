@@ -307,7 +307,7 @@ export default function AlertProfile({ component, user, handleProfileUpdate }: A
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>{component}</AlertDialog.Trigger>
-      <AlertDialog.Content maxWidth="450px">
+      <AlertDialog.Content style={{ fontFamily: 'Poppins' }} maxWidth="450px">
         <AlertDialog.Title>Edit Profile</AlertDialog.Title>
         <AlertDialog.Description size="2">
           Please make changes to your current profile

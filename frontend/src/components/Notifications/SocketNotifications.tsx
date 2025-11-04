@@ -1,7 +1,7 @@
 // SocketNotifications.tsx
 import { useEffect, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client/react';
-// import { GET_CONTACTS } from '../../graphql/queries/queries';
+import { GET_CONTACTS } from '../../graphql/queries/queries';
 import { toast, ToastContainer, type Id } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as RadixToast from '@radix-ui/react-toast';
@@ -90,16 +90,16 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
       try {
         if (!updatedUser) return;
 
-        // const existing = client.readQuery<{ users: User[] }>({ query: GET_CONTACTS });
-        // if (existing) {
-        //   const updatedUsers = existing.users.map((user: User) =>
-        //     user?._id === updatedUser._id ? { ...user, ...updatedUser } : user
-        //   );
-        //   client.writeQuery({
-        //     query: GET_CONTACTS,
-        //     data: { users: updatedUsers }
-        //   });
-        // }
+        const existing = client.readQuery<{ users: User[] }>({ query: GET_CONTACTS });
+        if (existing) {
+          const updatedUsers = existing.users.map((user: User) =>
+            user?._id === updatedUser._id ? { ...user, ...updatedUser } : user
+          );
+          client.writeQuery({
+            query: GET_CONTACTS,
+            data: { users: updatedUsers }
+          });
+        }
 
         // track to avoid login toast
 
