@@ -295,7 +295,7 @@ const ContactBar: React.FC<{
                   <Box
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
                   >
-                    <Flex minWidth="100px" maxWidth="300px" align="center" gap="2">
+                    <Flex width="300px" maxWidth="100px" align="center" gap="2">
                       <Text truncate weight="medium">
                         {tab === 'all' && c.username
                           ? c.username
