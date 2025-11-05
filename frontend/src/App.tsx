@@ -5,7 +5,7 @@ import Login from './components/Login/Login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Home from './components/Home/Home';
 import Signup from './components/Signup/Signup';
-import { Card, Grid, Heading, Inset, Separator, Text } from '@radix-ui/themes';
+import { Grid } from '@radix-ui/themes';
 import LandingCaption from './components/LandingCaption/LandingCaption';
 
 function App() {
@@ -30,7 +30,6 @@ function App() {
             align={'center'}
           >
             <LandingCaption />
-
             <Login />
           </Grid>
         }
@@ -48,9 +47,6 @@ function App() {
             align={'center'}
           >
             <LandingCaption />
-
-            {/* <Separator /> */}
-
             <Signup />
           </Grid>
         }
