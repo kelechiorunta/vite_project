@@ -44,8 +44,8 @@ type SignupProps = {
 };
 
 const Signup: React.FC<SignupProps> = ({
-  action = '/proxy/auth/signup',
-  googleHref = '/proxy/auth/google'
+  action = '/proxy/auth/signup'
+  // googleHref = '/proxy/auth/google'
 }) => {
   const [appearance, setAppearance] = React.useState<'light' | 'dark'>('light');
   const [showPassword, setShowPassword] = React.useState(false);
@@ -302,20 +302,20 @@ const Signup: React.FC<SignupProps> = ({
                       </Button>
 
                       {/* OR Divider */}
-                      <Flex align="center" gap="3" my="2">
+                      {/* <Flex align="center" gap="3" my="2">
                         <Separator style={{ flex: 1 }} />
                         <Text size="2" color="gray">
                           OR
                         </Text>
                         <Separator style={{ flex: 1 }} />
-                      </Flex>
+                      </Flex> */}
 
-                      {/* Google OAuth */}
+                      {/* Google OAuth
                       <Button asChild size="3" variant="soft" color="red">
                         <a href={googleHref} style={{ textDecoration: 'none' }}>
                           Continue with Google
                         </a>
-                      </Button>
+                      </Button> */}
                     </Flex>
                   </form>
                 )}
