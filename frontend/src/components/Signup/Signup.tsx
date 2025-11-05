@@ -8,7 +8,6 @@ import {
   Text,
   TextField,
   Button,
-  Separator,
   Link as RadixLink,
   IconButton
 } from '@radix-ui/themes';
