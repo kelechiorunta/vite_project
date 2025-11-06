@@ -139,7 +139,7 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  function isGroup(obj: groupType, authUser: AuthContextType): obj is groupType {
+  function isGroup(obj: groupType, authUser: AuthContextType) {
     return (
       obj && "members" in obj &&
       Array.isArray(obj.members) && "username" in obj.members[0] &&
