@@ -228,7 +228,7 @@ const ContactBar: React.FC<{
             const unReadData = unreadMap[c?._id as string];
 
             const isGroupLeader =
-              tab === 'groups' && isGroup(c) && c?.members[0].username === authUser?.username;
+              tab === 'groups' && isGroup(c) && c?.members[0]?.username === authUser?.username;
 
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
