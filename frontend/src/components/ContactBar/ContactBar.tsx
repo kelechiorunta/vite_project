@@ -54,6 +54,7 @@ const ContactBar: React.FC<{
   onSelectContact,
   onSelectGroup,
   mockContacts,
+  authUser,
   loading,
   error,
   typingUsers,
@@ -220,6 +221,14 @@ const ContactBar: React.FC<{
             const isOnline = onlineUsers && onlineUsers.has(c?._id as string);
             console.log(unreadMap[c?._id as string]);
             const unReadData = unreadMap[c?._id as string];
+
+            const isGroupLeader =
+            tab === "groups" &&
+            c &&
+            typeof c === "object" &&
+            Array.isArray(c.members) &&
+            c.members[0]?.username === authUser?.username;
+          
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
               <Flex
@@ -337,6 +346,7 @@ const ContactBar: React.FC<{
                     {unReadData && unReadData.timeStamp
                       ? formatDateLabel(unReadData.timeStamp)
                       : unReadData?.timeStamp}
+                      {isGroupLeader && 'Group lead'}
                   </Text>
                   {unReadData ? (
                     <Badge color="cyan">
