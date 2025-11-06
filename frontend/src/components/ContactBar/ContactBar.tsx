@@ -145,10 +145,10 @@ const ContactBar: React.FC<{
       'members' in obj &&
       Array.isArray(obj.members) &&
       'username' in obj.members[0] &&
-      typeof (obj as groupType).members[0]?.username === 'string' &&
+      typeof obj.members[0]?.username === 'string' &&
       'username' in authUser &&
       typeof authUser?.username === 'string' &&
-      (obj as groupType).members[0]?.username == authUser?.username
+      obj.members[0]?.username == authUser?.username
     );
   }
 
