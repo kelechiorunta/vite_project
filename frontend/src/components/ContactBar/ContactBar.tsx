@@ -238,7 +238,7 @@ const ContactBar: React.FC<{
             const isGroupLeader =
               tab === 'groups' &&
               isGroup(c) 
-              && c?.members[0]?.username === authUser?.username;
+            
 
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
