@@ -232,7 +232,7 @@ const ContactBar: React.FC<{
 
             const isGroupLeader =
               tab === 'groups' && "members" in c &&
-              Array.isArray(c?.members) &&
+              typeof c?.members !== null && 
               c?.members?.length > 0 &&
               typeof c?.members[0]?.username === 'string' &&
               c?.members[0]?.username === authUser?.username;
