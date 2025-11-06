@@ -139,9 +139,14 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  // function isGroup(obj: groupType | undefined): obj is groupType {
-  //   return obj && Array.isArray(obj?.members) && typeof obj?.members[0]?.username === 'string';
-  // }
+  function isGroup(obj: groupType, authUser: AuthContextType): obj is groupType {
+    return (
+      obj && "members" in obj &&
+      Array.isArray(obj.members) && "username" in obj.members[0] &&
+      typeof obj?.members[0]?.username === 'string' &&
+      obj?.members[0]?.username === authUser?.username
+    );
+  }
 
   return (
     <Flex direction="column" style={{ flex: 1, height: '100%' }}>
@@ -231,11 +236,9 @@ const ContactBar: React.FC<{
             //   tab === 'groups' && isGroup(c) && c?.members[0]?.username === authUser?.username;
 
             const isGroupLeader =
-              tab === 'groups' && "members" in c &&
-              typeof c?.members !== null && 
-              typeof c?.members !== undefined &&
-              typeof c.members[0]?.username === 'string' &&
-              c?.members[0]?.username === authUser?.username;
+              tab === 'groups' &&
+              isGroup(c, authUser) 
+              // && c?.members[0]?.username === authUser?.username;
 
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
