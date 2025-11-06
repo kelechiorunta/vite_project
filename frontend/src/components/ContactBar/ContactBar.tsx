@@ -139,7 +139,7 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  function isGroup(obj, authUser) {
+  function isGroup(obj: unknown, authUser: unknown) {
     return (
       obj &&
       'members' in obj &&
