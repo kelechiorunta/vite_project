@@ -138,6 +138,11 @@ const ContactBar: React.FC<{
       setFilteredUsers(sortedUsers);
     }
   }, [onlineUsers, filtered, tab]);
+
+  function isGroup(obj: any): obj is Group {
+    return obj && Array.isArray(obj.members) && typeof obj.members[0]?.username === 'string';
+  }
+
   return (
     <Flex direction="column" style={{ flex: 1, height: '100%' }}>
       {/* Header: Messages + Filters */}
@@ -223,12 +228,8 @@ const ContactBar: React.FC<{
             const unReadData = unreadMap[c?._id as string];
 
             const isGroupLeader =
-            tab === "groups" &&
-            c &&
-            typeof c === "object" &&
-            Array.isArray(c.members) &&
-            c.members[0]?.username === authUser?.username;
-          
+              tab === 'groups' && isGroup(c) && c.members[0].username === authUser?.username;
+
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
               <Flex
@@ -304,11 +305,7 @@ const ContactBar: React.FC<{
                   <Box
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
                   >
-                    <Flex
-                      className="responsive-flex"
-                      align="center"
-                      gap="2"
-                    >
+                    <Flex className="responsive-flex" align="center" gap="2">
                       <Text truncate weight="medium">
                         {tab === 'all' && c.username
                           ? c.username
@@ -346,7 +343,7 @@ const ContactBar: React.FC<{
                     {unReadData && unReadData.timeStamp
                       ? formatDateLabel(unReadData.timeStamp)
                       : unReadData?.timeStamp}
-                      {isGroupLeader && 'Group lead'}
+                    {isGroupLeader && 'Group lead'}
                   </Text>
                   {unReadData ? (
                     <Badge color="cyan">
