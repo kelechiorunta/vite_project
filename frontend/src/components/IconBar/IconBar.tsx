@@ -22,7 +22,12 @@ interface IconBarProps {
   handleProfileUpdate?: (props: AuthContextType) => void;
 }
 
-const IconBar: React.FC<IconBarProps> = ({ onOpenContacts, authUser, toggleTab, handleProfileUpdate }) => {
+const IconBar: React.FC<IconBarProps> = ({
+  onOpenContacts,
+  authUser,
+  toggleTab,
+  handleProfileUpdate
+}) => {
   const [collapsed, setCollapsed] = React.useState(true);
 
   const { toggleTheme, appTheme } = useTheme();

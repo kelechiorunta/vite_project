@@ -295,7 +295,11 @@ const ContactBar: React.FC<{
                   <Box
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
                   >
-                    <Flex width="300px" maxWidth="100px" align="center" gap="2">
+                    <Flex
+                      className="responsive-flex"
+                      align="center"
+                      gap="2"
+                    >
                       <Text truncate weight="medium">
                         {tab === 'all' && c.username
                           ? c.username
@@ -305,6 +309,7 @@ const ContactBar: React.FC<{
                       </Text>
                     </Flex>
                     <Text
+                      className="responsive-flex-text"
                       truncate
                       size="1"
                       color={isTyping ? 'green' : 'gray'}
@@ -327,8 +332,8 @@ const ContactBar: React.FC<{
                     </Text>
                   </Box>
                 </Flex>
-                <Flex minWidth="50px" maxWidth="70px" direction="column" align="end" gap="1">
-                  <Text truncate size="1" color="gray">
+                <Flex className="responsive-flex" direction="column" align="end" gap="1">
+                  <Text className="responsive-flex-text" truncate size="1" color="gray">
                     {unReadData && unReadData.timeStamp
                       ? formatDateLabel(unReadData.timeStamp)
                       : unReadData?.timeStamp}
