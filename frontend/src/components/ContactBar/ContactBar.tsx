@@ -139,7 +139,7 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  function isGroup(obj: any): obj is Group {
+  function isGroup(obj: any): obj is groupType {
     return obj && Array.isArray(obj.members) && typeof obj.members[0]?.username === 'string';
   }
 
