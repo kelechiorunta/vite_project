@@ -139,7 +139,7 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  function isGroup(obj: unknown, authUser: unknown) {
+  function isGroup(obj: groupType, authUser: AuthContextType) {
     return (
       obj &&
       'members' in obj &&
@@ -148,7 +148,7 @@ const ContactBar: React.FC<{
       typeof obj.members[0]?.username === 'string' &&
       'username' in authUser &&
       typeof authUser?.username === 'string' &&
-      obj?.members[0]?.username === authUser?.username
+      obj.members[0]?.username == authUser?.username
     );
   }
 
