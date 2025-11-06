@@ -68,3 +68,35 @@
   height: 8px;
   margin-left: 10px;
 }
+
+.responsive-flex {
+  max-width: 200px;
+}
+
+@media (min-width: 300px) {
+  .responsive-flex {
+    max-width: 100px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-flex {
+    max-width: 200px;
+  }
+}
+
+.responsive-flex-text {
+  max-width: 200px;
+}
+
+@media (min-width: 300px) {
+  .responsive-flex-text {
+    max-width: 88px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-flex-text {
+    max-width: 200px;
+  }
+}
