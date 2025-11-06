@@ -139,7 +139,7 @@ const ContactBar: React.FC<{
     }
   }, [onlineUsers, filtered, tab]);
 
-  function isGroup(obj: groupType, authUser: AuthContextType) {
+  function isGroup(obj: groupType) {
     return (
       obj && "members" in obj &&
       Array.isArray(obj.members) && "username" in obj.members[0] &&
@@ -237,8 +237,8 @@ const ContactBar: React.FC<{
 
             const isGroupLeader =
               tab === 'groups' &&
-              isGroup(c, authUser) 
-              // && c?.members[0]?.username === authUser?.username;
+              isGroup(c) 
+              && c?.members[0]?.username === authUser?.username;
 
             console.log(formatDateLabel(unReadData?.timeStamp));
             return (
