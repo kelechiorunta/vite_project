@@ -157,7 +157,9 @@ export type AuthContextType = {
   backgroundImageId?: unknown;
   backgroundPlaceholderId?: unknown;
   occupation?: string;
-  members?: object[];
+  description?: string;
+  createdAt?: string;
+  members?: AuthContextType[];
 };
 
 export type ChatMessage = {
@@ -229,7 +231,7 @@ type GetUnreadVars = {
 };
 
 export type groupType = {
-  _id?: string;
+  _id?: unknown | string;
   name?: string;
   description?: string;
   picture?: string;
