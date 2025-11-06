@@ -4,7 +4,7 @@ const rateLimitMiddleware = async (req, res, next) => {
   try {
     const { success } = await rateLimit.limit(req.user?._id);
 
-    const isAllowedRequests = req.url.includes('/proxy/chat-pictures');
+    const isAllowedRequests = req.url.includes('/proxy/chat-pictures') || req.url.includes('/graphql');
 
     if (!success && !isAllowedRequests) {
       return res
