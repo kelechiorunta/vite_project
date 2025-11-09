@@ -56,7 +56,7 @@ const IconBar: React.FC<IconBarProps> = ({
       }}
     >
       <Flex direction="column" align="center" gap="3" p="3">
-        <Tooltip content="Me">
+        <Tooltip content="Me" side="right">
           <IconButton variant="ghost" size="3">
             <Avatar
               src={authUser?.picture}
@@ -78,12 +78,12 @@ const IconBar: React.FC<IconBarProps> = ({
             ☰
           </Button>
         )}
-        <Tooltip content="Chats">
+        <Tooltip content="Chats" side="right">
           <IconButton variant="ghost" size="3">
             <ChatBubbleIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip content="Contacts">
+        <Tooltip content="Contacts" side="right">
           <IconButton
             onClick={() => {
               if (toggleTab) toggleTab('all');
@@ -94,7 +94,7 @@ const IconBar: React.FC<IconBarProps> = ({
             <PersonIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip content="Groups">
+        <Tooltip content="Groups" side="right">
           <IconButton
             onClick={() => {
               if (toggleTab) {
@@ -110,7 +110,7 @@ const IconBar: React.FC<IconBarProps> = ({
         </Tooltip>
       </Flex>
       <Flex direction="column" align="center" gap="3" p="3">
-        <Tooltip content="Settings">
+        <Tooltip content="Settings" side="right">
           <AlertProfile
             component={
               <IconButton variant="ghost" size="3">
@@ -123,7 +123,7 @@ const IconBar: React.FC<IconBarProps> = ({
         </Tooltip>
       </Flex>
       <Flex direction="column" align="center" gap="3" p="3">
-        <Tooltip content="Switch">
+        <Tooltip content="Switch" side="right">
           <IconButton
             size="2"
             variant="soft"
@@ -137,7 +137,7 @@ const IconBar: React.FC<IconBarProps> = ({
         </Tooltip>
       </Flex>
       <Flex direction="column" align="center" gap="3" p="3">
-        <Tooltip content="Logout">
+        <Tooltip content="Logout" side="right">
           <IconButton onClick={handleLogout} variant="ghost" size="3">
             <ExitIcon />
           </IconButton>
