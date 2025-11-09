@@ -1,5 +1,5 @@
 import './animateText.scss';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { animateText } from './animate';
 
 export interface animateTextProps {
@@ -57,19 +57,7 @@ const AnimateText = ({
         fontSize: textSize
       }}
       ref={textRef}
-    >
-      {/* <div
-        style={{
-          width: '100%',
-          fontWeight: 'bolder',
-          //   margin: 'auto',
-          //   padding: 'auto',
-          textAlign: 'center',
-          height: 'auto'
-        }}
-        ref={textRef}
-      ></div> */}
-    </div>
+    ></div>
   );
 };
 
