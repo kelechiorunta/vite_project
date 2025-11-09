@@ -1,7 +1,5 @@
 // //Promise based typer API for animating texts
 
-import type { HTMLElementType } from 'react';
-
 // const animateText = (textArg, textLabel, speed, delay) => {
 //   return new Promise((resolve) => {
 //     let index = 0;
