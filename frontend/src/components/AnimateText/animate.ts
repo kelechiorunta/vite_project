@@ -44,7 +44,22 @@
 
 // Promise-based typer API for animating texts safely
 
-const animateText = (textArg = '', _textLabel, speed = 100, delay = 1000) => {
+// Define a custom type that extends HTMLElement
+type AnimatedHTMLElement = HTMLElement & {
+  _animationState?: {
+    active?: boolean;
+    typeInterval?: number;
+    deleteInterval?: number;
+    timeoutId?: number;
+  };
+};
+
+const animateText = (
+  textArg: string = '',
+  _textLabel: AnimatedHTMLElement,
+  speed: number = 100,
+  delay: number = 1000
+): Promise<string> => {
   return new Promise((resolve) => {
     if (!_textLabel || !textArg) return resolve(textArg);
 
@@ -58,13 +73,12 @@ const animateText = (textArg = '', _textLabel, speed = 100, delay = 1000) => {
     // 🧩 Mark this label as actively animating
     _textLabel._animationState = { active: true };
 
-    // Reset the element (remove old spans)
+    // Reset element (remove old spans)
     _textLabel.textContent = '';
-    // _textLabel.style.height = '100px';
 
     let index = 0;
 
-    const typeInterval = setInterval(() => {
+    const typeInterval = window.setInterval(() => {
       if (index < textArg.length) {
         const span = document.createElement('span');
         span.classList.add('animate');
@@ -75,23 +89,22 @@ const animateText = (textArg = '', _textLabel, speed = 100, delay = 1000) => {
         clearInterval(typeInterval);
 
         // 🕐 Wait before starting delete effect
-        const timeoutId = setTimeout(() => {
+        const timeoutId = window.setTimeout(() => {
           let deleteIndex = textArg.length - 1;
-          const deleteInterval = setInterval(() => {
+          const deleteInterval = window.setInterval(() => {
             if (deleteIndex >= 0) {
               _textLabel.children[deleteIndex].remove();
               deleteIndex--;
             } else {
               clearInterval(deleteInterval);
               resolve(textArg);
-              _textLabel._animationState = { active: false }; // ✅ Mark as done
+              _textLabel._animationState = { active: false };
             }
           }, speed / 2);
-          _textLabel._animationState.deleteInterval = deleteInterval;
+          _textLabel._animationState!.deleteInterval = deleteInterval;
         }, delay * 2);
 
-        // Save references so they can be cleared if restarted
-        _textLabel._animationState.timeoutId = timeoutId;
+        _textLabel._animationState!.timeoutId = timeoutId;
       }
     }, speed);
 
