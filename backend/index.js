@@ -89,7 +89,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'dist')));
 // app.use(graphqlUploadExpress({ maxFileSize: 10_000_000, maxFiles: 5 }));
 
 // Handles rate limits per user
-app.use('/', rateLimitMiddleware);
+app.use('/proxy/auth', rateLimitMiddleware);
 
 if (process.env.NODE_ENV === 'production') {
   // Trust production server domain provider (Vercel or Render) as proxy
