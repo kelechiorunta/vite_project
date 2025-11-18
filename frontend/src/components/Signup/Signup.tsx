@@ -28,7 +28,10 @@ import toast from 'react-hot-toast';
 
 // ---- Validation
 const SignupSchema = Yup.object({
-  username: Yup.string().min(3, 'At least 3 characters').required('Username is required'),
+  username: Yup.string()
+    .min(3, 'At least 3 characters')
+    .matches(/^[A-Za-z]{3,20}$/, 'Accept only alphabets')
+    .required('Username is required'),
   email: Yup.string().email('Enter a valid email').required('Email is required'),
   password: Yup.string().min(6, 'Min 6 characters').required('Password is required'),
   confirmPassword: Yup.string()
