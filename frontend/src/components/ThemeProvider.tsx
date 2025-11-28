@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Theme } from '@radix-ui/themes';
 import { ThemeContext } from './theme-context';
 
@@ -6,40 +6,45 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
+// Define possible appearances for Radix UI
+export type Appearance = 'light' | 'dark';
+
 export default function ThemeProvider({ children }: ThemeProviderProps) {
-  const [appTheme, setAppTheme] = useState(true);
+  const localTheme = localStorage.getItem('localTheme');
+  const [appTheme, setAppTheme] = useState<boolean>(localTheme === 'light' || false);
 
   // const [appearance, setAppearance] = useState<Appearance>('light');
   const [fade, setFade] = useState(false);
 
-  const toggleAppearance = () => {
+  const toggleAppearance = useCallback(() => {
     setFade(true);
     setTimeout(() => {
-      setAppTheme((prev) => (!prev));
+      setAppTheme((prev) => !prev);
+
+      localStorage.setItem('localTheme', !appTheme ? 'light' : 'dark');
       setFade(false);
     }, 500); // match fade timing
-  };
+  }, [appTheme]);
 
   return (
-    <ThemeContext.Provider value={{ appTheme, toggleTheme: setAppTheme }}>
+    <ThemeContext.Provider value={{ appTheme, toggleTheme: toggleAppearance }}>
       <Theme
         accentColor="mint"
         grayColor="gray"
         panelBackground="solid"
         scaling="100%"
         radius="full"
-        appearance={!appTheme ? 'dark' : 'light'}
+        appearance={localTheme as Appearance}
       >
-       <div
+        <div
           style={{
             minHeight: '100vh',
             width: '100%',
             position: 'relative',
             overflow: 'hidden',
-            background:
-              appTheme
-                ? 'radial-gradient(circle at top right, #c2f0ff 0%, #e0f7fa 25%, #fdfdfd 80%)'
-                : 'radial-gradient(circle at bottom right, #0a0f24 0%, #1b2735 40%, #2c5364 100%)',
+            background: appTheme
+              ? 'radial-gradient(circle at top right, #c2f0ff 0%, #e0f7fa 25%, #fdfdfd 80%)'
+              : 'radial-gradient(circle at bottom right, #0a0f24 0%, #1b2735 40%, #2c5364 100%)',
             transition: 'background 1s ease-in-out, color 0.5s ease-in-out, opacity 0.5s ease',
             color: appTheme ? '#111' : '#f5f5f5',
             display: 'flex',

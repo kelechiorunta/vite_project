@@ -1,6 +1,7 @@
 import './animateText.scss';
 import { useEffect, useRef } from 'react';
 import { animateText } from './animate';
+import { Heading } from '@radix-ui/themes';
 
 export interface animateTextProps {
   texts?: string[];
@@ -37,6 +38,7 @@ const AnimateText = ({
 
           index = (index + 1) % texts.length;
           console.log(textHeight);
+          console.log(textSize);
           // isMounted = false;
         }
       };
@@ -48,16 +50,17 @@ const AnimateText = ({
         // textRef.current.innerHTML = '';
       };
     }
-  }, [speed, delay, textRef, texts]); // Only re-run if config changes
+  }, [speed, delay, textRef, texts, textHeight, textSize]); // Only re-run if config changes
 
   return (
-    <div
+    <Heading
       className="m-auto"
-      style={{
-        fontSize: textSize
-      }}
+      // style={{
+      //   fontSize: textSize
+      // }}
+      size={{ initial: '7', xs: '7', sm: '7', md: '8', lg: '9' }}
       ref={textRef}
-    ></div>
+    ></Heading>
   );
 };
 

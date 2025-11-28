@@ -3,7 +3,7 @@ import AnimateText from '../AnimateText/AnimateText';
 
 export default function LandingCaption() {
   return (
-    <Card size={'3'} m={'auto'} style={{ padding: '4rem' }}>
+    <Card size={'3'} m={'auto'} style={{ padding: '4rem', zIndex: 60 }}>
       <Inset clip="padding-box" side="top" pb="current">
         <Heading
           style={{ position: 'relative', padding: 5, zIndex: 3 }}
