@@ -30,7 +30,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   handleUpdating
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
-  const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
+  // const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
   const recentlyUpdatedProfilesRef = useRef<Set<string>>(new Set());
   const loginToastRef = useRef<Id | null>(null);
   const client = useApolloClient();
@@ -102,11 +102,11 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         }
 
         // track to avoid login toast
-
-        if (handleUpdating) {
-          handleUpdating(updatedUser);
-          setUpdatedProfileUser(updatedUser);
-        }
+        console.log(handleUpdating);
+        // if (handleUpdating) {
+        //   handleUpdating(updatedUser);
+        //   // setUpdatedProfileUser(updatedUser);
+        // }
         console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
         setTimeout(() => {
