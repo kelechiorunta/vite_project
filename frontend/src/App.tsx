@@ -35,6 +35,7 @@ function App() {
                 // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
                 gap="2"
                 width="100%"
+                maxWidth={'100%'}
                 // height={'100%'}
                 justify={'center'}
                 align={'center'}

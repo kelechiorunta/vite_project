@@ -84,7 +84,7 @@ const Login: React.FC<LoginProps> = ({
         align="center"
         justify="between"
         // width={'100%'}
-        style={{ width: 'min(30%, 1440px)', marginBottom: '4px', zIndex: 50 }}
+        style={{ width: 'min(100%, 1440px)', marginBottom: '4px', zIndex: 50 }}
       >
         <Heading size="4">JustChat</Heading>
         <Flex align="center" gap="2">
