@@ -93,7 +93,7 @@
 // Home.tsx
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Theme, Flex, Box, Button } from '@radix-ui/themes';
+import { Flex, Box, Button } from '@radix-ui/themes';
 import { useQuery, useLazyQuery } from '@apollo/client/react';
 import { io, Socket } from 'socket.io-client';
 import debounce from 'lodash.debounce';
@@ -290,7 +290,7 @@ export type Message = {
 const Home: React.FC = () => {
   const [selectedContact, setSelectedContact] = React.useState<AuthContextType | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { appTheme } = useTheme();
+  // const { appTheme } = useTheme();
   const [messages, setMessages] = useState<ChatMessage[] | Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedChat, _setSelectedChat] = useState<AuthContextType | null>(null);
@@ -853,137 +853,137 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Theme
-      appearance={appTheme ? 'light' : 'dark'}
-      radius="large"
-      scaling="100%"
-      accentColor="cyan"
-      grayColor="slate"
-      panelBackground="solid"
+    // <Theme
+    //   appearance={appTheme ? 'light' : 'dark'}
+    //   radius="large"
+    //   scaling="100%"
+    //   accentColor="cyan"
+    //   grayColor="slate"
+    //   panelBackground="solid"
+    // >
+    <Flex
+      style={{
+        height: '100vh',
+        width: '100vw',
+        overflow: 'hidden'
+        // marginLeft: '-2%'
+      }}
     >
-      <Flex
-        style={{
-          height: '100vh',
-          width: '100vw',
-          overflow: 'hidden'
-          // marginLeft: '-2%'
-        }}
-      >
-        {/* IconBar */}
-        <IconBar
-          authUser={currentUser}
-          toggleTab={handleSelectionTab}
-          handleProfileUpdate={handleProfileUpdate}
-        />
+      {/* IconBar */}
+      <IconBar
+        authUser={currentUser}
+        toggleTab={handleSelectionTab}
+        handleProfileUpdate={handleProfileUpdate}
+      />
 
-        <SocketNotifications socketInstance={socket} handleUpdating={handleUpdating} />
-        {isMobile ? (
-          selectedContact || selectedGroup ? (
-            // Show ChatBody full screen with back button
-            <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <Button
-                variant="soft"
-                style={{ alignSelf: 'flex-start', margin: '0.5rem' }}
-                onClick={() => {
-                  setSelectedContact(null);
-                  _setSelectedGroup(null);
-                }}
-              >
-                ← Back
-              </Button>
-              <ChatBody
-                loadingChats={loadingChats}
-                isMobile={isMobile}
-                messages={messages}
-                authUser={authUser}
-                contact={selectedContact}
-                handleSend={selectedContact ? sendMessage : handleSendGroupChat}
-                handleGroupSend={handleSendGroupChat}
-                input={input}
-                handleInput={handleTyping} //{setInput}
-                typingUsers={typingUsers}
-                onlineUsers={onlineUsers}
-                handleSelectedImage={handleSelectedImage}
-                selectedImage={selectedImage}
-              />
-            </Box>
-          ) : (
-            // Show ContactBar full screen
-            <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <ContactBar
-                onlineUsers={onlineUsers}
-                mockContacts={users}
-                user={user}
-                authUser={authUser}
-                onSelectContact={handleSelectChat} //{setSelectedContact}
-                onSelectGroup={handleSelectGroup} //{setSelectedContact}
-                loading={contacts_loading}
-                error={contacts_error}
-                typingUsers={typingUsers}
-                selectedContact={selectedContact ? selectedContact : selectedGroup}
-                // selectedGroup={selectedGroup}
-                tab={tab}
-                groups={groups}
-                loadingGroups={loadingGroups}
-                loadingError={_errorLoading}
-                unreadMap={unreadMap}
-              />
-            </Box>
-          )
-        ) : (
-          <>
-            {/* Contact List (desktop) */}
-            <Box
-              style={{
-                minWidth: '350px',
-                flex: '0 0 400px',
-                borderRight: '1px solid var(--gray-a5)',
-                display: 'flex',
-                flexDirection: 'column'
+      <SocketNotifications socketInstance={socket} handleUpdating={handleUpdating} />
+      {isMobile ? (
+        selectedContact || selectedGroup ? (
+          // Show ChatBody full screen with back button
+          <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Button
+              variant="soft"
+              style={{ alignSelf: 'flex-start', margin: '0.5rem' }}
+              onClick={() => {
+                setSelectedContact(null);
+                _setSelectedGroup(null);
               }}
             >
-              <ContactBar
-                mockContacts={users}
-                user={user}
-                authUser={authUser}
-                onSelectContact={handleSelectChat}
-                onSelectGroup={handleSelectGroup} //{setSelectedContact}
-                loading={contacts_loading}
-                error={contacts_error}
-                typingUsers={typingUsers}
-                onlineUsers={onlineUsers}
-                // selectedContact={selectedContact}
-                selectedContact={selectedContact ? selectedContact : selectedGroup}
-                tab={tab}
-                groups={groups}
-                loadingGroups={loadingGroups}
-                loadingError={_errorLoading}
-                unreadMap={unreadMap}
-              />
-            </Box>
+              ← Back
+            </Button>
+            <ChatBody
+              loadingChats={loadingChats}
+              isMobile={isMobile}
+              messages={messages}
+              authUser={authUser}
+              contact={selectedContact}
+              handleSend={selectedContact ? sendMessage : handleSendGroupChat}
+              handleGroupSend={handleSendGroupChat}
+              input={input}
+              handleInput={handleTyping} //{setInput}
+              typingUsers={typingUsers}
+              onlineUsers={onlineUsers}
+              handleSelectedImage={handleSelectedImage}
+              selectedImage={selectedImage}
+            />
+          </Box>
+        ) : (
+          // Show ContactBar full screen
+          <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <ContactBar
+              onlineUsers={onlineUsers}
+              mockContacts={users}
+              user={user}
+              authUser={authUser}
+              onSelectContact={handleSelectChat} //{setSelectedContact}
+              onSelectGroup={handleSelectGroup} //{setSelectedContact}
+              loading={contacts_loading}
+              error={contacts_error}
+              typingUsers={typingUsers}
+              selectedContact={selectedContact ? selectedContact : selectedGroup}
+              // selectedGroup={selectedGroup}
+              tab={tab}
+              groups={groups}
+              loadingGroups={loadingGroups}
+              loadingError={_errorLoading}
+              unreadMap={unreadMap}
+            />
+          </Box>
+        )
+      ) : (
+        <>
+          {/* Contact List (desktop) */}
+          <Box
+            style={{
+              minWidth: '350px',
+              flex: '0 0 400px',
+              borderRight: '1px solid var(--gray-a5)',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <ContactBar
+              mockContacts={users}
+              user={user}
+              authUser={authUser}
+              onSelectContact={handleSelectChat}
+              onSelectGroup={handleSelectGroup} //{setSelectedContact}
+              loading={contacts_loading}
+              error={contacts_error}
+              typingUsers={typingUsers}
+              onlineUsers={onlineUsers}
+              // selectedContact={selectedContact}
+              selectedContact={selectedContact ? selectedContact : selectedGroup}
+              tab={tab}
+              groups={groups}
+              loadingGroups={loadingGroups}
+              loadingError={_errorLoading}
+              unreadMap={unreadMap}
+            />
+          </Box>
 
-            {/* Chat Body */}
-            <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <ChatBody
-                loadingChats={loadingChats}
-                isMobile={isMobile}
-                messages={messages}
-                authUser={authUser}
-                contact={selectedContact ? selectedContact : selectedGroup}
-                handleSend={selectedContact ? sendMessage : handleSendGroupChat}
-                handleGroupSend={handleSendGroupChat}
-                input={input}
-                handleInput={handleTyping} //{setInput}
-                typingUsers={typingUsers}
-                onlineUsers={onlineUsers}
-                handleSelectedImage={handleSelectedImage}
-                selectedImage={selectedImage}
-              />
-            </Box>
-          </>
-        )}
-      </Flex>
-    </Theme>
+          {/* Chat Body */}
+          <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <ChatBody
+              loadingChats={loadingChats}
+              isMobile={isMobile}
+              messages={messages}
+              authUser={authUser}
+              contact={selectedContact ? selectedContact : selectedGroup}
+              handleSend={selectedContact ? sendMessage : handleSendGroupChat}
+              handleGroupSend={handleSendGroupChat}
+              input={input}
+              handleInput={handleTyping} //{setInput}
+              typingUsers={typingUsers}
+              onlineUsers={onlineUsers}
+              handleSelectedImage={handleSelectedImage}
+              selectedImage={selectedImage}
+            />
+          </Box>
+        </>
+      )}
+    </Flex>
+    // </Theme>
   );
 };
 

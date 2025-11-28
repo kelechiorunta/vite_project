@@ -59,14 +59,7 @@ const Login: React.FC<LoginProps> = ({
   const navigate = useNavigate();
 
   return (
-    // <Theme
-    //   appearance={appTheme ? 'light' : 'dark'}
-    //   radius="large"
-    //   scaling="100%"
-    //   accentColor="indigo"
-    //   grayColor="slate"
-    //   panelBackground="solid"
-    // >
+    
     <Flex
       align="center"
       justify="center"
@@ -75,7 +68,6 @@ const Login: React.FC<LoginProps> = ({
       minWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
       maxWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
       flexBasis={'1'}
-      // flexGrow={'1'}
       flexGrow={{ initial: '1', xs: '0', sm: '1', md: '1', lg: '1' }}
       // ml={{ initial: '-9', xs: '0', sm: '0', md: '0', lg: '0' }}
       p={{ initial: '0', xs: '4', sm: '4', md: '4', lg: '4' }}
@@ -295,7 +287,7 @@ const Login: React.FC<LoginProps> = ({
         </Card>
       </Box>
     </Flex>
-    // </Theme>
+  
   );
 };
 
