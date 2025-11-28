@@ -92,12 +92,12 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
 
         const existing = client.readQuery<{ users: User[] }>({ query: GET_CONTACTS });
         if (existing) {
-          const updatedUsers = existing.users.map((user: User) =>
-            user?._id === updatedUser._id ? { ...user, ...updatedUser } : user
-          );
+          const updatedUsers = existing.users.map((user: User) => {
+            return user?._id === updatedUser._id ? { ...user, ...updatedUser } : user;
+          });
           client.writeQuery({
             query: GET_CONTACTS,
-            data: { contacts: updatedUsers }
+            data: { users: updatedUsers }
           });
         }
 
