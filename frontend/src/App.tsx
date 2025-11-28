@@ -28,7 +28,10 @@ function App() {
             <AlertDialog.Content
               width={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
               maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
-              minWidth={{ initial: '395px', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              minWidth={{ initial: '355px', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              maxHeight={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              style={{ overflow: 'hidden' }}
+              // position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
             >
               <Flex
                 // style={{ padding: '2' }}
@@ -38,10 +41,13 @@ function App() {
                 gap="2"
                 width="100%"
                 minWidth={'100%'}
-                maxWidth={'100%'}
+                maxWidth={'355px'}
+                maxHeight={'100%'}
                 // height={'100%'}
                 justify={'center'}
                 align={'center'}
+                style={{ margin: 'auto' }}
+                //  position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
               >
                 {/* <LandingCaption /> */}
                 <Flex
@@ -74,10 +80,10 @@ function App() {
                   </div>
                 </Flex>
 
-                {/* <Flex
-                  position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
-                  // width={{ initial: '100%', xs: '90%', sm: '90%', md: '40%', lg: '50%' }}
-                > */}
+                {/* <Flex */}
+                {/* // position={{ initial: 'absolute' }} */}
+                {/* // width={{ initial: '100%', xs: '90%', sm: '90%', md: '40%', lg: '50%' }} */}
+                {/* > */}
                 <Login />
                 {/* </Flex> */}
               </Flex>
