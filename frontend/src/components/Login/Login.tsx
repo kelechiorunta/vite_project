@@ -72,10 +72,11 @@ const Login: React.FC<LoginProps> = ({
       justify="center"
       direction="column"
       width={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
-      // minWidth={'100%'}
+      minWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
       maxWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
       flexBasis={'1'}
-      flexGrow={'1'}
+      // flexGrow={'1'}
+      flexGrow={{ initial: '0', xs: '0', sm: '1', md: '1', lg: '1' }}
       p={'4'}
       // style={{ maxHeight: '100%', padding: '4px', maxWidth: '100%', width: '100%' }}
     >

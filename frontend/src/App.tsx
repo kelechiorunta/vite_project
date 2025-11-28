@@ -26,15 +26,18 @@ function App() {
         element={
           <AlertDialog.Root defaultOpen>
             <AlertDialog.Content
-              maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '85%' }}
+              width={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              minWidth={{ initial: '400px', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
             >
               <Flex
-                style={{ padding: '2' }}
-                p={'4'}
+                // style={{ padding: '2' }}
+                p={'2'}
                 wrap={'wrap'}
                 // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
                 gap="2"
                 width="100%"
+                minWidth={'400px'}
                 maxWidth={'100%'}
                 // height={'100%'}
                 justify={'center'}
@@ -71,7 +74,12 @@ function App() {
                   </div>
                 </Flex>
 
+                {/* <Flex
+                  position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
+                  // width={{ initial: '100%', xs: '90%', sm: '90%', md: '40%', lg: '50%' }}
+                > */}
                 <Login />
+                {/* </Flex> */}
               </Flex>
             </AlertDialog.Content>
           </AlertDialog.Root>
