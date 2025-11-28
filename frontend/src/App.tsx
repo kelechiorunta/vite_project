@@ -5,8 +5,12 @@ import Login from './components/Login/Login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Home from './components/Home/Home';
 import Signup from './components/Signup/Signup';
-import { Flex, Grid } from '@radix-ui/themes';
+import { AlertDialog, Flex, Grid, Heading } from '@radix-ui/themes';
 import LandingCaption from './components/LandingCaption/LandingCaption';
+
+import Slider from './components/Slider/Slider';
+import happyImg from '/assets/happy.jpg';
+import AnimateText from './components/AnimateText/AnimateText';
 
 function App() {
   // const { toggleTheme, appTheme } = useTheme();
@@ -20,20 +24,52 @@ function App() {
       <Route
         path="/login"
         element={
-          <Flex
-            style={{ padding: '2' }}
-            p={'4'}
-            wrap={'wrap'}
-            // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
-            gap="2"
-            width="100%"
-            // height={'100%'}
-            justify={'center'}
-            align={'center'}
-          >
-            <LandingCaption />
-            <Login />
-          </Flex>
+          <AlertDialog.Root defaultOpen>
+            <AlertDialog.Content
+              maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '85%' }}
+            >
+              <Flex
+                style={{ padding: '2' }}
+                p={'4'}
+                wrap={'wrap'}
+                // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
+                gap="2"
+                width="100%"
+                // height={'100%'}
+                justify={'center'}
+                align={'center'}
+              >
+                {/* <LandingCaption /> */}
+                <Flex
+                  position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
+                  width={{ initial: '100%', xs: '90%', sm: '90%', md: '40%', lg: '40%' }}
+                >
+                  <div
+                    style={{
+                      maxHeight: '60vh',
+                      height: '100%',
+                      minHeight: '70vh',
+                      width: '100%',
+                      backgroundImage: `url(${happyImg})`,
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                      position: 'relative',
+                      borderRadius: '20px'
+                    }}
+                  >
+                    <Slider buttonVisible={false} />
+                  </div>
+                  <div style={{ position: 'absolute', bottom: 20, left: 10 }}>
+                    <Heading>
+                      <AnimateText texts={['JUSTCHAT', `Let's Connect`]} />
+                    </Heading>
+                  </div>
+                </Flex>
+
+                <Login />
+              </Flex>
+            </AlertDialog.Content>
+          </AlertDialog.Root>
         }
       />
       <Route

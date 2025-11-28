@@ -1,7 +1,7 @@
 // Login.tsx
 import * as React from 'react';
 import {
-  Theme,
+  // Theme,
   Box,
   Card,
   Flex,
@@ -59,183 +59,191 @@ const Login: React.FC<LoginProps> = ({
   const navigate = useNavigate();
 
   return (
-    <Theme
-      appearance={appTheme ? 'light' : 'dark'}
-      radius="large"
-      scaling="100%"
-      accentColor="indigo"
-      grayColor="slate"
-      panelBackground="solid"
+    // <Theme
+    //   appearance={appTheme ? 'light' : 'dark'}
+    //   radius="large"
+    //   scaling="100%"
+    //   accentColor="indigo"
+    //   grayColor="slate"
+    //   panelBackground="solid"
+    // >
+    <Flex
+      align="center"
+      justify="center"
+      direction="column"
+      width={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
+      // minWidth={'100%'}
+      maxWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
+      flexBasis={'1'}
+      flexGrow={'1'}
+      p={'4'}
+      // style={{ maxHeight: '100%', padding: '4px', maxWidth: '100%', width: '100%' }}
     >
+      {/* {/* Top bar */}
       <Flex
         align="center"
-        justify="center"
-        direction="column"
-        style={{ maxHeight: '100%', padding: '24px', maxWidth: '600px' }}
+        justify="between"
+        // width={'100%'}
+        style={{ width: 'min(30%, 1440px)', marginBottom: '4px', zIndex: 50 }}
       >
-        {/* Top bar */}
-        <Flex
-          align="center"
-          justify="between"
-          style={{ width: 'min(100%, 1440px)', marginBottom: '24px' }}
-        >
-          <Heading size="4">JustChat</Heading>
-          <Flex align="center" gap="2">
-            <Text size="2" color="gray">
+        <Heading size="4">JustChat</Heading>
+        <Flex align="center" gap="2">
+          {/* <Text size="2" color="gray">
               Theme
-            </Text>
-            <IconButton
-              size="2"
-              variant="soft"
-              aria-label="Toggle theme"
-              onClick={() => {
-                toggleTheme(!appTheme);
-                setAppearance((a) => (a === 'light' ? 'dark' : 'light'));
-              }}
-            >
-              {appearance === 'light' ? <SunIcon /> : <MoonIcon />}
-            </IconButton>
-          </Flex>
+            </Text> */}
+          <IconButton
+            size="2"
+            variant="soft"
+            aria-label="Toggle theme"
+            onClick={() => {
+              toggleTheme(!appTheme);
+              setAppearance((a) => (a === 'light' ? 'dark' : 'light'));
+            }}
+          >
+            {appearance === 'light' ? <SunIcon /> : <MoonIcon />}
+          </IconButton>
         </Flex>
+      </Flex>
 
-        {/* Login card */}
-        <Box style={{ width: 'min(100%, 420px)' }}>
-          <Card size="4" variant="surface">
-            <Flex direction="column" gap="5">
-              <Flex direction="column" gap="1">
+      {/* Login card */}
+      <Box style={{ width: 'min(100%, 420px)' }}>
+        <Card size="4" variant="surface" style={{ width: '100%' }}>
+          <Flex direction="column" gap="5" maxWidth={'100%'}>
+            {/* <Flex direction="column" gap="1">
                 <Heading as="h1" size="6">
                   Login
-                </Heading>
-                <Text size="2" color="gray">
+                </Heading> */}
+            {/* <Text size="2" color="gray">
                   Use your email and password, or continue with Google.
-                </Text>
-              </Flex>
+                </Text> */}
+            {/* </Flex> */}
 
-              <Formik<LoginValues>
-                initialValues={initialValues}
-                validationSchema={LoginSchema}
-                onSubmit={async (values, { setSubmitting }) => {
-                  try {
-                    const res = await fetch(action, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      credentials: 'include',
-                      body: JSON.stringify(values)
-                    });
+            <Formik<LoginValues>
+              initialValues={initialValues}
+              validationSchema={LoginSchema}
+              onSubmit={async (values, { setSubmitting }) => {
+                try {
+                  const res = await fetch(action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(values)
+                  });
 
-                    if (!res.ok) {
-                      // backend returns JSON with error
-                      const errorData = await res.json();
-                      throw new Error(JSON.stringify(errorData));
-                    }
-
-                    // optional: show a success toast before redirect
-                    toast.success('Login successful! Redirecting...');
-                    await new Promise((r) => setTimeout(r, 600));
-                    navigate('/');
-                    // window.location.href = '/';
-                  } catch (err: unknown) {
-                    if (err instanceof Error) {
-                      try {
-                        // Try parsing backend error
-                        const parsed = JSON.parse(err.message);
-                        toast.error(parsed?.error ?? 'Something went wrong');
-                      } catch {
-                        toast.error(err.message || 'An unexpected error occurred');
-                      }
-                    } else {
-                      toast.error('An unexpected error occurred');
-                    }
-                  } finally {
-                    setSubmitting(false);
+                  if (!res.ok) {
+                    // backend returns JSON with error
+                    const errorData = await res.json();
+                    throw new Error(JSON.stringify(errorData));
                   }
-                }}
-              >
-                {({
-                  values,
-                  errors,
-                  touched,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  isSubmitting
-                  // setFieldValue
-                }) => (
-                  <form onSubmit={handleSubmit} noValidate>
-                    <Flex direction="column" gap="4">
-                      {/* Email */}
-                      <div>
-                        <Text as="label" size="2" mb="2" style={{ display: 'block' }}>
-                          Email
-                        </Text>
-                        <TextField.Root
-                          placeholder="you@example.com"
-                          size="3"
-                          variant="soft"
-                          name="email"
-                          type="email"
-                          value={values.email}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          color={touched.email && errors.email ? 'red' : 'indigo'}
-                          aria-invalid={!!(touched.email && errors.email)}
-                          aria-describedby="email-error"
-                        >
-                          <TextField.Slot>
-                            <PersonIcon />
-                          </TextField.Slot>
-                        </TextField.Root>
-                        {touched.email && errors.email && (
-                          <Text id="email-error" size="1" color="red" mt="1">
-                            {errors.email}
-                          </Text>
-                        )}
-                      </div>
 
-                      {/* Password */}
-                      <div>
-                        <Text as="label" size="2" mb="2" style={{ display: 'block' }}>
-                          Password
+                  // optional: show a success toast before redirect
+                  toast.success('Login successful! Redirecting...');
+                  await new Promise((r) => setTimeout(r, 600));
+                  navigate('/');
+                  // window.location.href = '/';
+                } catch (err: unknown) {
+                  if (err instanceof Error) {
+                    try {
+                      // Try parsing backend error
+                      const parsed = JSON.parse(err.message);
+                      toast.error(parsed?.error ?? 'Something went wrong');
+                    } catch {
+                      toast.error(err.message || 'An unexpected error occurred');
+                    }
+                  } else {
+                    toast.error('An unexpected error occurred');
+                  }
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting
+                // setFieldValue
+              }) => (
+                <form onSubmit={handleSubmit} noValidate style={{ width: '100%' }}>
+                  <Flex direction="column" gap="4" width={'100%'}>
+                    {/* Email */}
+                    <div>
+                      <Text as="label" size="2" mb="2" style={{ display: 'block' }}>
+                        Email
+                      </Text>
+                      <TextField.Root
+                        style={{ width: '100%' }}
+                        placeholder="you@example.com"
+                        size="3"
+                        variant="soft"
+                        name="email"
+                        type="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        color={touched.email && errors.email ? 'red' : 'indigo'}
+                        aria-invalid={!!(touched.email && errors.email)}
+                        aria-describedby="email-error"
+                      >
+                        <TextField.Slot>
+                          <PersonIcon />
+                        </TextField.Slot>
+                      </TextField.Root>
+                      {touched.email && errors.email && (
+                        <Text id="email-error" size="1" color="red" mt="1">
+                          {errors.email}
                         </Text>
-                        <TextField.Root
-                          placeholder="Your password"
-                          size="3"
-                          variant="soft"
-                          name="password"
-                          type={showPassword ? 'text' : 'password'}
-                          value={values.password}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          color={touched.password && errors.password ? 'red' : 'indigo'}
-                          aria-invalid={!!(touched.password && errors.password)}
-                          aria-describedby="password-error"
-                        >
-                          <TextField.Slot>
-                            <LockClosedIcon />
-                          </TextField.Slot>
-                          <TextField.Slot side="right">
-                            <IconButton
-                              size="1"
-                              variant="ghost"
-                              type="button"
-                              aria-label={showPassword ? 'Hide password' : 'Show password'}
-                              onClick={() => setShowPassword((s) => !s)}
-                            >
-                              {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
-                            </IconButton>
-                          </TextField.Slot>
-                        </TextField.Root>
-                        {touched.password && errors.password && (
-                          <Text id="password-error" size="1" color="red" mt="1">
-                            {errors.password}
-                          </Text>
-                        )}
-                      </div>
+                      )}
+                    </div>
 
-                      {/* Remember me + Forgot */}
-                      <Flex align="center" justify="between">
-                        <Flex align="center" gap="2">
-                          {/* <Checkbox
+                    {/* Password */}
+                    <div style={{ width: '100%' }}>
+                      <Text as="label" size="2" mb="2" style={{ display: 'block' }}>
+                        Password
+                      </Text>
+                      <TextField.Root
+                        placeholder="Your password"
+                        size="3"
+                        variant="soft"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        color={touched.password && errors.password ? 'red' : 'indigo'}
+                        aria-invalid={!!(touched.password && errors.password)}
+                        aria-describedby="password-error"
+                      >
+                        <TextField.Slot>
+                          <LockClosedIcon />
+                        </TextField.Slot>
+                        <TextField.Slot side="right">
+                          <IconButton
+                            size="1"
+                            variant="ghost"
+                            type="button"
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            onClick={() => setShowPassword((s) => !s)}
+                          >
+                            {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
+                          </IconButton>
+                        </TextField.Slot>
+                      </TextField.Root>
+                      {touched.password && errors.password && (
+                        <Text id="password-error" size="1" color="red" mt="1">
+                          {errors.password}
+                        </Text>
+                      )}
+                    </div>
+
+                    {/* Remember me + Forgot */}
+                    <Flex align="center" justify="between">
+                      <Flex align="center" gap="2">
+                        {/* <Checkbox
                             checked={values.rememberMe}
                             onCheckedChange={(checked) =>
                               setFieldValue('rememberMe', Boolean(checked))
@@ -245,47 +253,47 @@ const Login: React.FC<LoginProps> = ({
                           <Text as="label" htmlFor="remember" size="2" color="gray">
                             Remember me
                           </Text> */}
-                        </Flex>
-                        <RadixLink href="/forgot-password" size="2">
-                          Forgot password?
-                        </RadixLink>
                       </Flex>
-
-                      {/* Submit */}
-                      <Button size="3" type="submit" disabled={isSubmitting}>
-                        Sign in
-                        <ArrowRightIcon />
-                      </Button>
-
-                      {/* OR Divider */}
-                      <Flex align="center" gap="3" my="2">
-                        <Separator style={{ flex: 1 }} />
-                        <Text size="2" color="gray">
-                          OR
-                        </Text>
-                        <Separator style={{ flex: 1 }} />
-                      </Flex>
-
-                      {/* Google OAuth */}
-                      <Button asChild size="3" variant="soft" color="red">
-                        <a href={googleHref} style={{ textDecoration: 'none' }}>
-                          Continue with Google
-                        </a>
-                      </Button>
+                      <RadixLink href="/forgot-password" size="2">
+                        Forgot password?
+                      </RadixLink>
                     </Flex>
-                  </form>
-                )}
-              </Formik>
 
-              {/* Bottom text */}
-              <Text size="2" color="gray" align="center">
-                Don’t have an account? <RadixLink href="/register">Create one</RadixLink>
-              </Text>
-            </Flex>
-          </Card>
-        </Box>
-      </Flex>
-    </Theme>
+                    {/* Submit */}
+                    <Button size="3" type="submit" disabled={isSubmitting}>
+                      Sign in
+                      <ArrowRightIcon />
+                    </Button>
+
+                    {/* OR Divider */}
+                    <Flex align="center" gap="3" my="1">
+                      <Separator style={{ flex: 1 }} />
+                      <Text size="2" color="gray">
+                        OR
+                      </Text>
+                      <Separator style={{ flex: 1 }} />
+                    </Flex>
+
+                    {/* Google OAuth */}
+                    <Button asChild size="3" variant="soft" color="red">
+                      <a href={googleHref} style={{ textDecoration: 'none' }}>
+                        Continue with Google
+                      </a>
+                    </Button>
+                  </Flex>
+                </form>
+              )}
+            </Formik>
+
+            {/* Bottom text */}
+            <Text size="2" color="gray" align="center">
+              Don’t have an account? <RadixLink href="/register">Create one</RadixLink>
+            </Text>
+          </Flex>
+        </Card>
+      </Box>
+    </Flex>
+    // </Theme>
   );
 };
 
