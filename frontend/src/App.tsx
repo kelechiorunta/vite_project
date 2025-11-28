@@ -28,7 +28,7 @@ function App() {
             <AlertDialog.Content
               width={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
               maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
-              minWidth={{ initial: '400px', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              minWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
             >
               <Flex
                 // style={{ padding: '2' }}
