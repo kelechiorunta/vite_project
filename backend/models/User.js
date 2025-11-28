@@ -8,7 +8,7 @@ import validator from 'validator';
 //   }, { _id: false }); // Disable _id for subdocs inside Map
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: false, default: '', match: /^[A-Za-z]{3,20}$/ },
+  username: { type: String, required: false, default: '' }, // match: /^[A-Za-z]{3,20}$/ },
   name: { type: String, required: false, default: '' },
   email: { type: String, required: false, validate: validator.isEmail },
   password: { type: String, required: false },
