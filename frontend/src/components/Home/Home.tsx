@@ -112,7 +112,7 @@ import {
 import IconBar from '../IconBar/IconBar';
 import ContactBar from '../ContactBar/ContactBar';
 import ChatBody from '../ChatBody/ChatBody';
-import { useTheme } from '../theme-context';
+// import { useTheme } from '../theme-context';
 import SocketNotifications from '../Notifications/SocketNotifications';
 
 const useMediaQuery = (query: string) => {
