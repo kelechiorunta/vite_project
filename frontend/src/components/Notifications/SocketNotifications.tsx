@@ -97,7 +97,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
           );
           client.writeQuery({
             query: GET_CONTACTS,
-            data: { users: updatedUsers }
+            data: { contacts: updatedUsers }
           });
         }
 
