@@ -27,8 +27,8 @@ function App() {
           <AlertDialog.Root defaultOpen>
             <AlertDialog.Content
               width={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
-              maxWidth={{ initial: '120%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
-              minWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              maxWidth={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
+              minWidth={{ initial: '120%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
               maxHeight={{ initial: '100%', xs: '90%', sm: '90%', md: '75%', lg: '95%' }}
               style={{ overflow: 'hidden' }}
               // position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
