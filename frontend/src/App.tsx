@@ -5,11 +5,11 @@ import Login from './components/Login/Login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Home from './components/Home/Home';
 import Signup from './components/Signup/Signup';
-import { AlertDialog, Flex, Grid, Heading } from '@radix-ui/themes';
+import { AlertDialog, Avatar, Flex, Grid, Heading } from '@radix-ui/themes';
 import LandingCaption from './components/LandingCaption/LandingCaption';
 
 import Slider from './components/Slider/Slider';
-import happyImg from '/assets/happy.jpg';
+// import happyImg from '/assets/happy.jpg';
 import AnimateText from './components/AnimateText/AnimateText';
 
 function App() {
@@ -44,21 +44,25 @@ function App() {
                   position={{ initial: 'absolute', xs: 'absolute', md: 'relative', lg: 'relative' }}
                   width={{ initial: '100%', xs: '90%', sm: '90%', md: '40%', lg: '40%' }}
                 >
-                  <div
+                  <Avatar
+                    src="/assets/happy.jpg"
+                    fallback="/assets/happy.jpg"
                     style={{
-                      maxHeight: '60vh',
+                      maxHeight: '70vh',
                       height: '100%',
                       minHeight: '70vh',
                       width: '100%',
-                      backgroundImage: `url(${happyImg})`,
+                      // backgroundImage: `url(${happyImg})`,
                       backgroundPosition: 'center',
                       backgroundSize: 'cover',
                       position: 'relative',
                       borderRadius: '20px'
                     }}
-                  >
+                  />
+                  <div style={{ position: 'absolute', top: 20, left: 10 }}>
                     <Slider buttonVisible={false} />
                   </div>
+
                   <div style={{ position: 'absolute', bottom: 20, left: 10 }}>
                     <Heading>
                       <AnimateText texts={['JUSTCHAT', `Let's Connect`]} />
