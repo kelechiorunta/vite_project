@@ -106,7 +106,7 @@ const Login: React.FC<LoginProps> = ({
       </Flex>
 
       {/* Login card */}
-      <Box style={{ width: 'min(100%, 420px)' }}>
+      <Box style={{ width: 'min(100%, 100%)' }}>
         <Card size="4" variant="surface" style={{ width: '100%' }}>
           <Flex direction="column" gap="5" maxWidth={'100%'}>
             {/* <Flex direction="column" gap="1">
