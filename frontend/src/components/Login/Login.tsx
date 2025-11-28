@@ -76,8 +76,9 @@ const Login: React.FC<LoginProps> = ({
       maxWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
       flexBasis={'1'}
       // flexGrow={'1'}
-      flexGrow={{ initial: '0', xs: '0', sm: '1', md: '1', lg: '1' }}
-      p={'4'}
+      flexGrow={{ initial: '1', xs: '0', sm: '1', md: '1', lg: '1' }}
+      ml={{ initial: '-9', xs: '0', sm: '0', md: '0', lg: '0' }}
+      p={{ initial: '0', xs: '4', sm: '4', md: '4', lg: '4' }}
       // style={{ maxHeight: '100%', padding: '4px', maxWidth: '100%', width: '100%' }}
     >
       {/* {/* Top bar */}
