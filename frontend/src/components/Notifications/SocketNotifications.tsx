@@ -108,7 +108,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
 
         if (handleUpdating && authUsers) {
           for (const userId of authUsers) {
-            if (updatedUser?._id == userId) {
+            if (updatedUser?._id !== userId) {
               handleUpdating(updatedUser);
               setUpdatedProfileUser(updatedUser);
               alert(updatedUser?.username);
