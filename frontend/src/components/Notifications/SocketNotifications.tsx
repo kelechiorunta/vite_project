@@ -22,6 +22,7 @@ interface SocketNotificationsProps {
   socketInstance: Socket | null;
   handleUpdating?: (update: AuthContextType | null) => void;
   authUsers?: Set<string>; //AuthContextType;
+  authUser?: AuthContextType;
 }
 
 /**
@@ -30,7 +31,8 @@ interface SocketNotificationsProps {
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   socketInstance,
   handleUpdating,
-  authUsers
+  authUsers,
+  authUser
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
   const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
@@ -103,12 +105,12 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
             data: { users: updatedUsers }
           });
         }
-        alert(authUsers);
+        // alert(authUsers);
         // track to avoid login toast
 
-        if (handleUpdating && authUsers) {
+        if (handleUpdating && authUsers && authUser) {
           for (const userId of authUsers) {
-            if (updatedUser?._id !== userId) {
+            if (updatedUser._id === userId && updatedUser._id === authUser._id) {
               handleUpdating(updatedUser);
               setUpdatedProfileUser(updatedUser);
               alert(updatedUser?.username);
@@ -145,7 +147,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
       socketInstance.off('LoggingOut', handleLoggingOut);
       socketInstance.off('Updating', handleProfileChanged);
     };
-  }, [socketInstance, client, handleUpdating, authUsers]);
+  }, [socketInstance, client, handleUpdating, authUsers, authUser]);
 
   return (
     <>
