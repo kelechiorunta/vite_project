@@ -32,7 +32,7 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   handleUpdating
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
-  const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
+  // const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
   const recentlyUpdatedProfilesRef = useRef<Set<string>>(new Set());
   const loginToastRef = useRef<Id | null>(null);
   const client = useApolloClient();
