@@ -871,7 +871,7 @@ const Home: React.FC = () => {
     >
       {/* IconBar */}
       <IconBar
-        authUser={currentUser}
+        authUser={authUser}
         toggleTab={handleSelectionTab}
         handleProfileUpdate={handleProfileUpdate}
       />

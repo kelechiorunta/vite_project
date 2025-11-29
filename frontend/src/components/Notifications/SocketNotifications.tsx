@@ -20,6 +20,7 @@ type SocketEventPayload = {
 interface SocketNotificationsProps {
   socketInstance: Socket | null;
   handleUpdating?: (update: AuthContextType | null) => void;
+  authUser?: AuthContextType;
 }
 
 /**
@@ -27,7 +28,8 @@ interface SocketNotificationsProps {
  */
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   socketInstance,
-  handleUpdating
+  handleUpdating,
+  authUser
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
   // const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
@@ -102,11 +104,11 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         }
 
         // track to avoid login toast
-        console.log(handleUpdating);
-        // if (handleUpdating) {
-        //   handleUpdating(updatedUser);
-        //   // setUpdatedProfileUser(updatedUser);
-        // }
+        // console.log(handleUpdating);
+        if (handleUpdating) {
+          if (updatedUser._id === authUser?._id) handleUpdating(updatedUser);
+          // setUpdatedProfileUser(updatedUser);
+        }
         console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
         setTimeout(() => {
