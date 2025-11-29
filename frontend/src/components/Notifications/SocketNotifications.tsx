@@ -29,7 +29,8 @@ interface SocketNotificationsProps {
  */
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   socketInstance,
-  handleUpdating
+  handleUpdating,
+  authUsers
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
   // const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
@@ -105,7 +106,16 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
 
         // track to avoid login toast
         // console.log(handleUpdating);
-        if (handleUpdating) handleUpdating(updatedUser);
+        if (handleUpdating && authUsers) {
+          for (const userId of authUsers) {
+            if (updatedUser?._id === userId) {
+              handleUpdating(updatedUser);
+              alert(updatedUser?.username);
+            }
+            return updatedUser;
+          }
+        } //handleUpdating(updatedUser);
+
         // setUpdatedProfileUser(updatedUser);
         console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
