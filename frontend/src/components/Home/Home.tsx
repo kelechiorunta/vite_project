@@ -607,7 +607,12 @@ const Home: React.FC = () => {
 
   const handleUpdating = (update: AuthContextType | null) => {
     if (update) {
-      setCurrentUser(update);
+      for (const userId of onlineUsers) {
+        if (update?._id === userId) {
+          setCurrentUser(update);
+        }
+        return update;
+      }
     }
   };
 
