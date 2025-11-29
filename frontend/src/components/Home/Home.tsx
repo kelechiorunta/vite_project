@@ -880,6 +880,7 @@ const Home: React.FC = () => {
         socketInstance={socket}
         handleUpdating={handleUpdating}
         authUsers={onlineUsers}
+        authUser={authUser}
       />
       {isMobile ? (
         selectedContact || selectedGroup ? (
