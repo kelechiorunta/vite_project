@@ -601,8 +601,8 @@ const Home: React.FC = () => {
     typingUsers,
     client,
     authUser?._id,
-    selectedGroup,
-    currentUser
+    selectedGroup
+    // currentUser
   ]);
 
   const handleUpdating = (update: AuthContextType | null) => {
@@ -610,6 +610,7 @@ const Home: React.FC = () => {
       for (const userId of onlineUsers) {
         if (update?._id === userId) {
           setCurrentUser(update);
+          alert(update?.username);
         }
         return update;
       }
