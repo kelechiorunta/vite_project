@@ -29,8 +29,7 @@ interface SocketNotificationsProps {
  */
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   socketInstance,
-  handleUpdating,
-  authUsers
+  handleUpdating
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
   const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
