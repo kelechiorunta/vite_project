@@ -108,15 +108,17 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         // alert(authUsers);
         // track to avoid login toast
 
-        if (handleUpdating && authUsers) {
-          for (const userId of authUsers) {
-            if (updatedUser._id === userId) {
-              console.log('AUTHUSERS', authUsers);
-              handleUpdating(updatedUser);
-              setUpdatedProfileUser(updatedUser);
-              alert(updatedUser?.username);
+        if (handleUpdating) {
+          if (authUsers) {
+            for (const userId of authUsers) {
+              if (updatedUser._id === userId) {
+                console.log('AUTHUSERS', authUsers);
+                handleUpdating(updatedUser);
+                setUpdatedProfileUser(updatedUser);
+                alert(updatedUser?.username);
+              }
+              // return updatedUser;
             }
-            // return updatedUser;
           }
         }
 
