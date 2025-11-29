@@ -20,7 +20,7 @@ type SocketEventPayload = {
 interface SocketNotificationsProps {
   socketInstance: Socket | null;
   handleUpdating?: (update: AuthContextType | null) => void;
-  authUser?: AuthContextType;
+  authUsers?: Set<string>; //AuthContextType;
 }
 
 /**
@@ -29,10 +29,10 @@ interface SocketNotificationsProps {
 const SocketNotifications: React.FC<SocketNotificationsProps> = ({
   socketInstance,
   handleUpdating,
-  authUser
+  authUsers
 }) => {
   const [_signedUsers, setSignedUsers] = useState<Set<string>>(new Set());
-  // const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
+  const [_updatedProfileUser, setUpdatedProfileUser] = useState<User | null>(null);
   const recentlyUpdatedProfilesRef = useRef<Set<string>>(new Set());
   const loginToastRef = useRef<Id | null>(null);
   const client = useApolloClient();
@@ -106,8 +106,12 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         // track to avoid login toast
         // console.log(handleUpdating);
         if (handleUpdating) {
-          if (updatedUser._id === authUser?._id) handleUpdating(updatedUser);
-          // setUpdatedProfileUser(updatedUser);
+          for (const userId of authUsers as Set<string>) {
+            if (userId === updatedUser?._id) {
+              handleUpdating(updatedUser);
+              setUpdatedProfileUser(updatedUser);
+            }
+          }
         }
         console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
