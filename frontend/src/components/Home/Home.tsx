@@ -871,12 +871,16 @@ const Home: React.FC = () => {
     >
       {/* IconBar */}
       <IconBar
-        authUsers={onlineUsers}
+        authUser={currentUser}
         toggleTab={handleSelectionTab}
         handleProfileUpdate={handleProfileUpdate}
       />
 
-      <SocketNotifications socketInstance={socket} handleUpdating={handleUpdating} />
+      <SocketNotifications
+        socketInstance={socket}
+        handleUpdating={handleUpdating}
+        authUsers={onlineUsers}
+      />
       {isMobile ? (
         selectedContact || selectedGroup ? (
           // Show ChatBody full screen with back button

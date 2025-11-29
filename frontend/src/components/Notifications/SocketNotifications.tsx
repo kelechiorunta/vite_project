@@ -15,6 +15,7 @@ type SocketEventPayload = {
   loggedInUser?: User;
   signedOutUser?: User;
   updatedUser?: User;
+  authUsers?: Set<string>;
 };
 
 interface SocketNotificationsProps {
