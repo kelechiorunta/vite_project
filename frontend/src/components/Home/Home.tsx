@@ -601,8 +601,8 @@ const Home: React.FC = () => {
     typingUsers,
     client,
     authUser?._id,
-    selectedGroup
-    // currentUser
+    selectedGroup,
+    currentUser
   ]);
 
   const handleUpdating = (update: AuthContextType | null) => {
