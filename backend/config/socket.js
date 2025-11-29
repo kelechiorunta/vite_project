@@ -493,8 +493,9 @@ const configureSocket = (app, corsOptions) => {
 
             if (updated) {
               const updatedUser = updated;
-              socket.emit('Updating', { updatedUser });
-              socket.broadcast.emit('Updating', { updatedUser });
+              // socket.emit('Updating', { updatedUser });
+              // socket.broadcast.emit('Updating', { updatedUser });
+              io.emit('Updating', { updatedUser });
               console.log('Updating from server');
             }
           }
