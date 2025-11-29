@@ -105,19 +105,18 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
             data: { users: updatedUsers }
           });
         }
-        // alert(authUsers);
-        // track to avoid login toast
-        const username = localStorage.getItem('currentUsername');
+
+        // const username = localStorage.getItem('currentUsername');
         if (handleUpdating) {
           if (authUsers) {
             for (const userId of authUsers) {
-              if (username) {
-                if (updatedUser._id === userId && updatedUser.username === username) {
-                  console.log('AUTHUSERS', authUsers);
-                  handleUpdating(updatedUser);
-                  setUpdatedProfileUser(updatedUser);
-                  alert(updatedUser?.username);
-                }
+              // if (username) {
+              if (updatedUser._id === userId) {
+                console.log('AUTHUSERS', userId);
+                handleUpdating(updatedUser);
+                setUpdatedProfileUser(updatedUser);
+                alert(userId);
+                // }
               }
 
               // return updatedUser;
