@@ -607,7 +607,7 @@ const Home: React.FC = () => {
 
   const handleUpdating = (update: AuthContextType | null) => {
     if (update) {
-      setCurrentUser(update)
+      setCurrentUser(update);
     }
   };
 
