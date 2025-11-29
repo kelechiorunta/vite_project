@@ -106,14 +106,8 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
 
         // track to avoid login toast
         // console.log(handleUpdating);
-        if (handleUpdating) {
-          for (const userId of authUsers as Set<string>) {
-            if (userId === updatedUser?._id) {
-              handleUpdating(updatedUser);
-              setUpdatedProfileUser(updatedUser);
-            }
-          }
-        }
+        if (handleUpdating) handleUpdating(updatedUser);
+        // setUpdatedProfileUser(updatedUser);
         console.log('Updating');
         recentlyUpdatedProfilesRef.current.add(updatedUser._id as string);
         setTimeout(() => {
