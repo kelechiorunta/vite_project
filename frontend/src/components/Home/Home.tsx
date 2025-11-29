@@ -305,6 +305,10 @@ const Home: React.FC = () => {
 
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
   const authUser = useOutletContext<AuthContextType>();
+  if (authUser) {
+    localStorage.setItem('currentUsername', authUser?.username as string);
+  }
+
   const [currentUser, setCurrentUser] = useState<AuthContextType | null>(authUser);
   const { data } = useQuery<{ auth: AuthContextType }>(AUTH);
   const {
