@@ -296,6 +296,7 @@ const Home: React.FC = () => {
   const [selectedChat, _setSelectedChat] = useState<AuthContextType | null>(null);
   const [selectedGroup, _setSelectedGroup] = useState<groupType | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
   const [_isOnline, setIsOnline] = useState(null);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
@@ -546,6 +547,7 @@ const Home: React.FC = () => {
 
     socket.on('userOnline', ({ userId, online }) => {
       setOnlineUsers((prev) => new Set(prev).add(userId));
+      setActiveUsers((prev) => new Set(prev).add(userId));
       setIsOnline(online);
     });
 
@@ -883,7 +885,7 @@ const Home: React.FC = () => {
       <SocketNotifications
         socketInstance={socket}
         handleUpdating={handleUpdating}
-        authUsers={onlineUsers}
+        authUsers={activeUsers}
         authUser={authUser}
       />
       {isMobile ? (
