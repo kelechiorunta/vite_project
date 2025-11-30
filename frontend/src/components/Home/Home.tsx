@@ -91,7 +91,7 @@
 // export default Home;
 
 // Home.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Flex, Box, Button } from '@radix-ui/themes';
 import { useQuery, useLazyQuery } from '@apollo/client/react';
@@ -611,11 +611,11 @@ const Home: React.FC = () => {
     currentUser
   ]);
 
-  const handleUpdating = (update: AuthContextType | null) => {
+  const handleUpdating = useCallback((update: AuthContextType | null) => {
     if (update) {
       setCurrentUser(update);
     }
-  };
+  }, []);
 
   const handleProfileUpdate = (values: AuthContextType) => {
     if (values && socket) {
