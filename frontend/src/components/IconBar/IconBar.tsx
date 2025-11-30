@@ -1,6 +1,6 @@
 // IconBar.tsx
 import * as React from 'react';
-import { Avatar, Button, Flex, IconButton, Tooltip } from '@radix-ui/themes';
+import { Avatar, Box, Button, Flex, IconButton, Tooltip } from '@radix-ui/themes';
 import {
   ChatBubbleIcon,
   PersonIcon,
@@ -14,19 +14,24 @@ import {
 import { useTheme } from '../theme-context';
 import type { AuthContextType, TabTypes } from '../Home/Home';
 import AlertProfile from '../AlertProfile/AlertProfile';
+import MobileDropDownMenu from '../MobileDropdownMenu/MobileDropDownMenu';
 
 interface IconBarProps {
   onOpenContacts?: () => void; // 👈 optional prop
   authUser: AuthContextType | null;
   toggleTab?: (tab: TabTypes) => void;
   handleProfileUpdate?: (props: AuthContextType) => void;
+  isCollapsible: boolean;
+  isMobile: boolean;
 }
 
 const IconBar: React.FC<IconBarProps> = ({
   onOpenContacts,
   authUser,
   toggleTab,
-  handleProfileUpdate
+  handleProfileUpdate,
+  isCollapsible,
+  isMobile
 }) => {
   const [collapsed, setCollapsed] = React.useState(true);
 
@@ -40,34 +45,26 @@ const IconBar: React.FC<IconBarProps> = ({
     }
   };
 
-  // function handleProfileUpdate(props: AuthContextType): void {
-  //   throw new Error('Function not implemented.');
-  // }
-
-  const [isCollapsible, setIsCollapsible] = React.useState(window.innerWidth < 400);
-
-  // 🔥 Watch window resize and update `isMobile`
-  React.useEffect(() => {
-    const handleResize = () => {
-      setIsCollapsible(window.innerWidth < 400);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isCollapsible]);
-
   return (
-    <>
-      {isCollapsible ? (
-        <Button>Hello</Button>
+    <Flex>
+      {isMobile ? (
+        <Box maxHeight={'50px'} style={{ position: 'fixed', top: 12, left: 8 }}>
+          <MobileDropDownMenu />
+        </Box>
       ) : (
+        // <IconButton style={{ position: 'fixed', top: 10, left: 4 }}>Hello</IconButton>
         <Flex
           direction="column"
           justify="between"
+          maxHeight={isCollapsible ? '50px' : 'auto'}
           style={{
-            width: collapsed ? '60px' : '80px',
+            width: collapsed || isCollapsible ? '60px' : '80px',
             borderRight: '1px solid var(--gray-a5)',
             background: 'var(--gray-1)',
-            transition: 'width 0.2s ease'
+            transition: 'width 0.2s ease',
+            height: isCollapsible ? '50px' : '100%',
+            position: isCollapsible ? 'fixed' : 'relative',
+            display: isCollapsible ? 'none' : 'block'
           }}
         >
           <Flex direction="column" align="center" gap="3" p="3">
@@ -160,7 +157,7 @@ const IconBar: React.FC<IconBarProps> = ({
           </Flex>
         </Flex>
       )}
-    </>
+    </Flex>
   );
 };
 

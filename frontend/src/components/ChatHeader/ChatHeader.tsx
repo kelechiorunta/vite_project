@@ -19,7 +19,9 @@ export const ChatHeader: React.FC<{
   onBack?: () => void; // useful for mobile switcher
   typingUsers?: Set<string>;
   onlineUsers?: Set<string>;
-}> = ({ contact, onBack, typingUsers, onlineUsers }) => {
+  isCollapsible: boolean;
+  isMobile: boolean;
+}> = ({ contact, onBack, typingUsers, onlineUsers, isCollapsible, isMobile }) => {
   const isTyping = typingUsers?.has(contact?._id as string);
   const isOnline = onlineUsers?.has(contact?._id as string);
   return (
@@ -32,7 +34,12 @@ export const ChatHeader: React.FC<{
     >
       <Flex align="center" gap="3">
         {onBack ? (
-          <Button variant="ghost" size="1" onClick={onBack}>
+          <Button
+            variant="ghost"
+            size="1"
+            onClick={onBack}
+            ml={isCollapsible || isMobile ? '9' : 'auto'}
+          >
             ←
           </Button>
         ) : null}

@@ -110,10 +110,10 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         if (handleUpdating) {
           if (authUsers) {
             for (const userId of authUsers) {
-              // if (username) {
               if (updatedUser._id !== userId) {
                 handleUpdating(updatedUser);
                 setUpdatedProfileUser(updatedUser);
+                console.log('AUTHUSERS', JSON.stringify(Array.from(authUsers)));
                 alert(authUsers.size.toString());
                 // }
               }
