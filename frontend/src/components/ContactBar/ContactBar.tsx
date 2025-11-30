@@ -51,6 +51,7 @@ const ContactBar: React.FC<{
   loadingGroups?: boolean;
   loadingError?: unknown;
   isCollapsible?: boolean;
+  isMobile?: boolean;
 }> = ({
   onSelectContact,
   onSelectGroup,
@@ -66,7 +67,8 @@ const ContactBar: React.FC<{
   groups,
   loadingGroups,
   loadingError,
-  isCollapsible
+  isCollapsible,
+  isMobile
 }) => {
   const [query, setQuery] = React.useState('');
   const [filter, setFilter] = React.useState<'all' | 'unread' | 'online' | string>('all');
@@ -164,8 +166,14 @@ const ContactBar: React.FC<{
         py="3"
         style={{ borderBottom: '1px solid var(--gray-a3)' }}
       >
-        <Box>
-          <Heading truncate weight="bold" ml={isCollapsible ? '9' : '0'}>
+        <Box ml={isCollapsible || isMobile ? '9' : 'auto'}>
+          <Heading
+            truncate
+            weight="bold"
+            size={isCollapsible ? '4' : '6'}
+            // ml={isCollapsible ? '9' : '0'}
+            // style={{ marginLeft: isCollapsible ? '30px' : 'auto' }}
+          >
             {'Messages'}
           </Heading>
           {/* <Text size="1" color="gray">

@@ -274,7 +274,7 @@ const ChatBody: React.FC<{
   return (
     <Flex
       width={isCollapsible ? '100%' : 'auto'}
-      minWidth={isCollapsible ? '355px' : 'auto'}
+      minWidth={isCollapsible ? '360px' : 'auto'}
       maxWidth={isCollapsible ? '100%' : 'auto'}
       ml={isCollapsible ? '-9' : '0'}
       // width={isCollapsible ? '100%' : 'auto'}
@@ -306,7 +306,7 @@ const ChatBody: React.FC<{
         }}
         // width={'100%'}
         // minWidth={'400px'}
-        m={'auo'}
+
         gap="3"
       >
         {messages &&

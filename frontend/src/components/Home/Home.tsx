@@ -957,6 +957,7 @@ const Home: React.FC = () => {
               loadingError={_errorLoading}
               unreadMap={unreadMap}
               isCollapsible={isCollapsible}
+              isMobile={isMobile}
             />
           </Box>
         )
@@ -990,6 +991,7 @@ const Home: React.FC = () => {
               loadingError={_errorLoading}
               unreadMap={unreadMap}
               isCollapsible={isCollapsible}
+              isMobile={isMobile}
             />
           </Box>
 
