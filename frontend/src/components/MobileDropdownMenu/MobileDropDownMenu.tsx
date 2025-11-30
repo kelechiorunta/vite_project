@@ -1,7 +1,17 @@
 import { DropdownMenuIcon } from '@radix-ui/react-icons';
 import { Button, DropdownMenu, IconButton } from '@radix-ui/themes';
+import type { AuthContextType, TabTypes } from '../Home/Home';
 
-export default function MobileDropDownMenu() {
+interface MobileProps {
+  onOpenContacts?: () => void; // 👈 optional prop
+  authUser?: AuthContextType | null;
+  toggleTab?: (tab: TabTypes) => void;
+  handleProfileUpdate?: (props: AuthContextType) => void;
+  isCollapsible?: boolean;
+  isMobile?: boolean;
+}
+
+export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
   const handleLogout = () => {
     try {
       window.location.href = '/proxy/auth/logout';
@@ -9,8 +19,13 @@ export default function MobileDropDownMenu() {
       console.error(error);
     }
   };
+  const handleGroups = () => {
+    if (toggleTab) {
+      toggleTab('groups');
+    }
+  };
   return (
-    <DropdownMenu.Root >
+    <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <Button variant="soft">
           <DropdownMenuIcon />
@@ -27,7 +42,7 @@ export default function MobileDropDownMenu() {
           <DropdownMenu.SubTrigger>Groups</DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
             <DropdownMenu.Item>Contacts</DropdownMenu.Item>
-            <DropdownMenu.Item>Groups</DropdownMenu.Item>
+            <DropdownMenu.Item onClick={handleGroups}>Groups</DropdownMenu.Item>
 
             <DropdownMenu.Separator />
             <DropdownMenu.Item>Profile Settings...</DropdownMenu.Item>
