@@ -220,6 +220,7 @@ const ChatBody: React.FC<{
   handleInput: (id: string) => void;
   typingUsers: Set<string>;
   onlineUsers: Set<string>;
+  isCollapsible: boolean;
 }> = ({
   contact,
   authUser,
@@ -231,7 +232,8 @@ const ChatBody: React.FC<{
   typingUsers,
   onlineUsers,
   handleSelectedImage,
-  selectedImage
+  selectedImage,
+  isCollapsible
 }) => {
   const chatEndRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -270,8 +272,25 @@ const ChatBody: React.FC<{
   };
 
   return (
-    <Flex direction="column" style={{ flex: 1, background: 'var(--gray-1)' }}>
-      <ChatHeader onlineUsers={onlineUsers} typingUsers={typingUsers} contact={contact} />
+    <Flex
+      width={isCollapsible ? '100%' : 'auto'}
+      minWidth={isCollapsible ? '355px' : 'auto'}
+      maxWidth={isCollapsible ? '100%' : 'auto'}
+      ml={isCollapsible ? '-9' : '0'}
+      // width={isCollapsible ? '100%' : 'auto'}
+      // height={isCollapsible ? '100%' : 'auto'}
+      // maxHeight={'100vh'}
+      // position={isCollapsible ? 'fixed' : 'relative'}
+      direction="column"
+      style={{ flex: 1, background: 'var(--gray-1)' }}
+    >
+      <ChatHeader
+        onlineUsers={onlineUsers}
+        typingUsers={typingUsers}
+        contact={contact}
+        isCollapsible={isCollapsible}
+        isMobile={isMobile}
+      />
 
       {/* Messages */}
       <Flex
@@ -285,6 +304,9 @@ const ChatBody: React.FC<{
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
+        // width={'100%'}
+        // minWidth={'400px'}
+        m={'auo'}
         gap="3"
       >
         {messages &&

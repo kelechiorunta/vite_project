@@ -858,28 +858,35 @@ const Home: React.FC = () => {
     }
   };
 
+  const [isCollapsible, setIsCollapsible] = React.useState(window.innerWidth < 400);
+
+  // 🔥 Watch window resize and update `isMobile`
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsCollapsible(window.innerWidth < 360);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isCollapsible]);
+
   return (
-    // <Theme
-    //   appearance={appTheme ? 'light' : 'dark'}
-    //   radius="large"
-    //   scaling="100%"
-    //   accentColor="cyan"
-    //   grayColor="slate"
-    //   panelBackground="solid"
-    // >
     <Flex
       style={{
         height: '100vh',
         width: '100vw',
         overflow: 'hidden'
+
         // marginLeft: '-2%'
       }}
     >
       {/* IconBar */}
+
       <IconBar
         authUser={currentUser}
         toggleTab={handleSelectionTab}
         handleProfileUpdate={handleProfileUpdate}
+        isCollapsible={isCollapsible}
+        isMobile={isMobile}
       />
 
       <SocketNotifications
@@ -888,17 +895,27 @@ const Home: React.FC = () => {
         authUsers={activeUsers}
         authUser={authUser}
       />
-      {isMobile ? (
+      {isMobile || isCollapsible ? (
         selectedContact || selectedGroup ? (
           // Show ChatBody full screen with back button
-          <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box
+            p={'0'}
+            width={'100%'}
+            ml={isCollapsible ? '9' : '0'}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+          >
             <Button
               variant="soft"
-              style={{ alignSelf: 'flex-start', margin: '0.5rem' }}
+              style={{
+                alignSelf: 'flex-start',
+                margin: '0.5rem',
+                marginLeft: 'auto'
+              }}
               onClick={() => {
                 setSelectedContact(null);
                 _setSelectedGroup(null);
               }}
+              // ml={isCollapsible || isMobile ? '9' : '0'}
             >
               ← Back
             </Button>
@@ -916,6 +933,7 @@ const Home: React.FC = () => {
               onlineUsers={onlineUsers}
               handleSelectedImage={handleSelectedImage}
               selectedImage={selectedImage}
+              isCollapsible={isCollapsible}
             />
           </Box>
         ) : (
@@ -938,6 +956,7 @@ const Home: React.FC = () => {
               loadingGroups={loadingGroups}
               loadingError={_errorLoading}
               unreadMap={unreadMap}
+              isCollapsible={isCollapsible}
             />
           </Box>
         )
@@ -970,6 +989,7 @@ const Home: React.FC = () => {
               loadingGroups={loadingGroups}
               loadingError={_errorLoading}
               unreadMap={unreadMap}
+              isCollapsible={isCollapsible}
             />
           </Box>
 
@@ -989,6 +1009,7 @@ const Home: React.FC = () => {
               onlineUsers={onlineUsers}
               handleSelectedImage={handleSelectedImage}
               selectedImage={selectedImage}
+              isCollapsible={isCollapsible}
             />
           </Box>
         </>

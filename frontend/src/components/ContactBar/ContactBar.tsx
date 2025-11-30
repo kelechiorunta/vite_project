@@ -50,6 +50,7 @@ const ContactBar: React.FC<{
   groups?: groupType[];
   loadingGroups?: boolean;
   loadingError?: unknown;
+  isCollapsible?: boolean;
 }> = ({
   onSelectContact,
   onSelectGroup,
@@ -64,7 +65,8 @@ const ContactBar: React.FC<{
   tab,
   groups,
   loadingGroups,
-  loadingError
+  loadingError,
+  isCollapsible
 }) => {
   const [query, setQuery] = React.useState('');
   const [filter, setFilter] = React.useState<'all' | 'unread' | 'online' | string>('all');
@@ -163,7 +165,9 @@ const ContactBar: React.FC<{
         style={{ borderBottom: '1px solid var(--gray-a3)' }}
       >
         <Box>
-          <Heading weight="bold">{'Messages'}</Heading>
+          <Heading truncate weight="bold" ml={isCollapsible ? '9' : '0'}>
+            {'Messages'}
+          </Heading>
           {/* <Text size="1" color="gray">
             {mockContacts.length} chats
           </Text> */}
