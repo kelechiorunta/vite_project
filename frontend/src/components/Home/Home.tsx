@@ -899,7 +899,7 @@ const Home: React.FC = () => {
         selectedContact || selectedGroup ? (
           // Show ChatBody full screen with back button
           <Box
-            p={'0'}
+            // p={'0'}
             width={'100%'}
             ml={isCollapsible ? '9' : '0'}
             style={{ flex: 1, display: 'flex', flexDirection: 'column' }}

@@ -166,7 +166,7 @@ const ContactBar: React.FC<{
         py="3"
         style={{ borderBottom: '1px solid var(--gray-a3)' }}
       >
-        <Box ml={isCollapsible || isMobile ? '9' : 'auto'}>
+        <Box ml={isCollapsible || isMobile ? '9' : '0'}>
           <Heading
             truncate
             weight="bold"
