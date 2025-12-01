@@ -48,8 +48,8 @@ const IconBar: React.FC<IconBarProps> = ({
   return (
     <Flex>
       {isMobile ? (
-        <Box maxHeight={'50px'} style={{ position: 'fixed', top: 12, left: 8 }}>
-          <MobileDropDownMenu toggleTab={ toggleTab} />
+        <Box maxHeight={'50px'} style={{ position: 'fixed', top: 10, left: 8 }}>
+          <MobileDropDownMenu toggleTab={toggleTab} />
         </Box>
       ) : (
         // <IconButton style={{ position: 'fixed', top: 10, left: 4 }}>Hello</IconButton>
