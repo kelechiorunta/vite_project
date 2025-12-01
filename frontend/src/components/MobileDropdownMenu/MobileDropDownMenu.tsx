@@ -1,24 +1,25 @@
 import { DropdownMenuIcon } from '@radix-ui/react-icons';
-import { Button, DropdownMenu, IconButton } from '@radix-ui/themes';
+import { Button, DropdownMenu, IconButton, Text } from '@radix-ui/themes';
 import type { AuthContextType, TabTypes } from '../Home/Home';
+import AlertProfile from '../AlertProfile/AlertProfile';
 
 interface MobileProps {
   onOpenContacts?: () => void; // 👈 optional prop
   authUser?: AuthContextType | null;
   toggleTab?: (tab: TabTypes) => void;
   handleProfileUpdate?: (props: AuthContextType) => void;
+  handleLogout?: () => void;
   isCollapsible?: boolean;
   isMobile?: boolean;
 }
 
-export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
-  const handleLogout = () => {
-    try {
-      window.location.href = '/proxy/auth/logout';
-    } catch (error) {
-      console.error(error);
-    }
-  };
+export default function MobileDropDownMenu({
+  toggleTab,
+  authUser,
+  handleProfileUpdate,
+  handleLogout,
+  isCollapsible
+}: MobileProps) {
   const handleGroups = () => {
     if (toggleTab) {
       toggleTab('groups');
@@ -29,6 +30,7 @@ export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
       toggleTab('all');
     }
   };
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
@@ -38,19 +40,30 @@ export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item shortcut="⌘ E">Edit</DropdownMenu.Item>
+        {/* <DropdownMenu.Item shortcut="⌘ E">Edit</DropdownMenu.Item>
         <DropdownMenu.Item shortcut="⌘ D">Duplicate</DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item shortcut="⌘ N">Archive</DropdownMenu.Item>
+        <DropdownMenu.Item shortcut="⌘ N">Archive</DropdownMenu.Item> */}
 
         <DropdownMenu.Sub>
-          <DropdownMenu.SubTrigger>Groups</DropdownMenu.SubTrigger>
+          <DropdownMenu.SubTrigger>My Chats</DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
             <DropdownMenu.Item onClick={handleContacts}>Contacts</DropdownMenu.Item>
             <DropdownMenu.Item onClick={handleGroups}>Groups</DropdownMenu.Item>
 
             <DropdownMenu.Separator />
-            <DropdownMenu.Item>Profile Settings...</DropdownMenu.Item>
+            <DropdownMenu.Item
+              onSelect={(e) => {
+                e.preventDefault(); // <-- KEEP DROPDOWN OPEN
+              }}
+            >
+              <AlertProfile
+                component={<Text>Profile Settings...</Text>}
+                isCollapsible={isCollapsible}
+                user={authUser}
+                handleProfileUpdate={handleProfileUpdate}
+              />
+            </DropdownMenu.Item>
             <DropdownMenu.Item>Advanced Settings...</DropdownMenu.Item>
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>

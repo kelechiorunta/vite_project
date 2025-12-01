@@ -568,15 +568,6 @@ const Home: React.FC = () => {
       setOnlineUsers((prev) => new Set(prev).add(currentUser));
     });
 
-    // socket.on('Updating', ({ updatedUser }) => {
-    //   if (updatedUser && updatedUser.length > 0) {
-    //     setCurrentUser(updatedUser);
-    //   }
-
-    //   console.log('Updating now');
-    //   // alert('Yay');
-    // });
-
     socket.on('typingIndication', ({ from }) => {
       setTypingUsers((prev) => new Set(prev).add(from));
 
@@ -899,7 +890,6 @@ const Home: React.FC = () => {
         selectedContact || selectedGroup ? (
           // Show ChatBody full screen with back button
           <Box
-            // p={'0'}
             width={'100%'}
             ml={isCollapsible ? '9' : '0'}
             style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
@@ -950,7 +940,6 @@ const Home: React.FC = () => {
               error={contacts_error}
               typingUsers={typingUsers}
               selectedContact={selectedContact ? selectedContact : selectedGroup}
-              // selectedGroup={selectedGroup}
               tab={tab}
               groups={groups}
               loadingGroups={loadingGroups}
