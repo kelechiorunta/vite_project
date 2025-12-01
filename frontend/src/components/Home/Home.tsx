@@ -602,9 +602,15 @@ const Home: React.FC = () => {
     currentUser
   ]);
 
-  const handleUpdating = useCallback((update: AuthContextType | null) => {
+  const handleUpdating = useCallback((update: AuthContextType | null, authUsers: Set<string>) => {
     if (update) {
-      setCurrentUser(update);
+      if (authUsers) {
+        for (const userId of authUsers) {
+          if (update._id == userId) {
+            setCurrentUser(update);
+          }
+        }
+      }
     }
   }, []);
 
