@@ -24,6 +24,11 @@ export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
       toggleTab('groups');
     }
   };
+  const handleContacts = () => {
+    if (toggleTab) {
+      toggleTab('all');
+    }
+  };
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
@@ -41,7 +46,7 @@ export default function MobileDropDownMenu({ toggleTab }: MobileProps) {
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger>Groups</DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
-            <DropdownMenu.Item>Contacts</DropdownMenu.Item>
+            <DropdownMenu.Item onClick={handleContacts}>Contacts</DropdownMenu.Item>
             <DropdownMenu.Item onClick={handleGroups}>Groups</DropdownMenu.Item>
 
             <DropdownMenu.Separator />
