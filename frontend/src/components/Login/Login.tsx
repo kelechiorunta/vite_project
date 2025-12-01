@@ -171,7 +171,7 @@ const Login: React.FC<LoginProps> = ({
                       </Text>
                       <TextField.Root
                         style={{ width: '100%' }}
-                        placeholder="you@example.com"
+                        placeholder="Email"
                         size="3"
                         variant="soft"
                         name="email"
@@ -200,7 +200,7 @@ const Login: React.FC<LoginProps> = ({
                         Password
                       </Text>
                       <TextField.Root
-                        placeholder="Your password"
+                        placeholder="Password"
                         size="3"
                         variant="soft"
                         name="password"
