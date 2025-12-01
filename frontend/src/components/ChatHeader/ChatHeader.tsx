@@ -75,9 +75,8 @@ export const ChatHeader: React.FC<{
             </Text>
             {isOnline ? (
               <>
-                <Badge color="green">Online</Badge>
                 <Text size="1" color={isTyping ? 'green' : 'gray'}>
-                  {isTyping ? 'typing...' : ''}
+                  {isTyping ? 'typing...' : <Badge color="green">Online</Badge>}
                 </Text>
               </>
             ) : (

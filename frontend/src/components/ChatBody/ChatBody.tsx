@@ -274,13 +274,9 @@ const ChatBody: React.FC<{
   return (
     <Flex
       width={isCollapsible ? '100%' : 'auto'}
-      minWidth={isCollapsible ? '360px' : 'auto'}
+      minWidth={isCollapsible ? '360px' : '100%'}
       maxWidth={isCollapsible ? '100%' : 'auto'}
       ml={isCollapsible ? '-9' : '0'}
-      // width={isCollapsible ? '100%' : 'auto'}
-      // height={isCollapsible ? '100%' : 'auto'}
-      // maxHeight={'100vh'}
-      // position={isCollapsible ? 'fixed' : 'relative'}
       direction="column"
       style={{ flex: 1, background: 'var(--gray-1)' }}
     >
