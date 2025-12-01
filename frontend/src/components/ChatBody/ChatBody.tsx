@@ -273,9 +273,9 @@ const ChatBody: React.FC<{
 
   return (
     <Flex
-      width={isCollapsible ? '100%' : 'auto'}
+      width={isCollapsible ? '100%' : '100%'}
       minWidth={isCollapsible ? '360px' : '100%'}
-      maxWidth={isCollapsible ? '100%' : 'auto'}
+      maxWidth={isCollapsible ? '100%' : '100%'}
       ml={isCollapsible ? '-9' : '0'}
       direction="column"
       style={{ flex: 1, background: 'var(--gray-1)' }}
