@@ -100,9 +100,15 @@ export type AlertComponentType = {
   component: React.ReactNode | null;
   user?: AuthContextType | undefined | null;
   handleProfileUpdate?: (props: AuthContextType) => void;
+  isCollapsible?: boolean;
 };
 
-export default function AlertProfile({ component, user, handleProfileUpdate }: AlertComponentType) {
+export default function AlertProfile({
+  component,
+  user,
+  handleProfileUpdate,
+  isCollapsible
+}: AlertComponentType) {
   const [preview, setPreview] = useState(user?.picture || user?.logo || '');
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(
     user?.birthday ? new Date(user.birthday) : undefined
@@ -135,8 +141,6 @@ export default function AlertProfile({ component, user, handleProfileUpdate }: A
       } catch (err) {
         console.error(err);
       }
-
-      // Add your GraphQL mutation or API request here
     }
   });
 
@@ -163,7 +167,11 @@ export default function AlertProfile({ component, user, handleProfileUpdate }: A
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>{component}</AlertDialog.Trigger>
-      <AlertDialog.Content maxWidth="450px">
+      <AlertDialog.Content
+        style={{ margin: 'auto', marginLeft: isCollapsible ? '-10px' : 'auto' }}
+        maxWidth="400px"
+        minWidth={'345px'}
+      >
         <AlertDialog.Title>Edit Profile</AlertDialog.Title>
         <AlertDialog.Description size="2">
           Please make changes to your current profile

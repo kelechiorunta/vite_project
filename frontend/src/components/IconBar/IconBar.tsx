@@ -21,8 +21,8 @@ interface IconBarProps {
   authUser: AuthContextType | null;
   toggleTab?: (tab: TabTypes) => void;
   handleProfileUpdate?: (props: AuthContextType) => void;
-  isCollapsible: boolean;
-  isMobile: boolean;
+  isCollapsible?: boolean;
+  isMobile?: boolean;
 }
 
 const IconBar: React.FC<IconBarProps> = ({
@@ -47,9 +47,15 @@ const IconBar: React.FC<IconBarProps> = ({
 
   return (
     <Flex>
-      {isMobile ? (
-        <Box maxHeight={'50px'} style={{ position: 'fixed', top: 10, left: 8 }}>
-          <MobileDropDownMenu toggleTab={toggleTab} />
+      {isMobile || isCollapsible ? (
+        <Box maxHeight={'50px'} style={{ position: 'fixed', top: 10, left: 8, zIndex: 0 }}>
+          <MobileDropDownMenu
+            toggleTab={toggleTab}
+            authUser={authUser}
+            handleProfileUpdate={handleProfileUpdate}
+            handleLogout={handleLogout}
+            isCollapsible={isCollapsible}
+          />
         </Box>
       ) : (
         // <IconButton style={{ position: 'fixed', top: 10, left: 4 }}>Hello</IconButton>
