@@ -20,7 +20,7 @@ type SocketEventPayload = {
 
 interface SocketNotificationsProps {
   socketInstance: Socket | null;
-  handleUpdating?: (update: AuthContextType | null) => void;
+  handleUpdating?: (update: AuthContextType | null, authUsers: Set<string>) => void;
   authUsers?: Set<string>; //AuthContextType;
   authUser?: AuthContextType;
 }
@@ -109,17 +109,8 @@ const SocketNotifications: React.FC<SocketNotificationsProps> = ({
         // const username = localStorage.getItem('currentUsername');
         if (handleUpdating) {
           if (authUsers) {
-            for (const userId of authUsers) {
-              if (updatedUser._id !== userId) {
-                handleUpdating(updatedUser);
-                setUpdatedProfileUser(updatedUser);
-                console.log('AUTHUSERS', JSON.stringify(Array.from(authUsers)));
-                alert(authUsers.size.toString());
-                // }
-              }
-
-              // return updatedUser;
-            }
+            handleUpdating(updatedUser, authUsers);
+            setUpdatedProfileUser(updatedUser);
           }
         }
 
