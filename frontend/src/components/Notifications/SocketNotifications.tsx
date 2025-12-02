@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // SocketNotifications.tsx
 import { useEffect, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client/react';
