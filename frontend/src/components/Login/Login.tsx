@@ -261,7 +261,17 @@ const Login: React.FC<LoginProps> = ({
                     </Flex>
 
                     {/* Submit */}
-                    <Button radius="small" size="3" type="submit" disabled={isSubmitting}>
+
+                    <Button
+                      // highContrast
+                      // variant="solid"
+                      m={'auto'}
+                      style={{ width: '85%' }}
+                      radius="small"
+                      size="3"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
                       Sign in
                       <ArrowRightIcon />
                     </Button>
@@ -276,7 +286,15 @@ const Login: React.FC<LoginProps> = ({
                     </Flex>
 
                     {/* Google OAuth */}
-                    <Button radius="small" asChild size="3" variant="soft" color="red">
+                    <Button
+                      m={'auto'}
+                      style={{ width: '85%' }}
+                      radius="small"
+                      asChild
+                      size="3"
+                      variant="soft"
+                      color="red"
+                    >
                       <a href={googleHref} style={{ textDecoration: 'none' }}>
                         Continue with Google
                       </a>
