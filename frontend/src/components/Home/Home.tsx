@@ -554,11 +554,17 @@ const Home: React.FC = () => {
 
     socket.on('currentlyOnline', ({ userIds, online }) => {
       setOnlineUsers(new Set(userIds));
+      setActiveUsers(new Set(userIds));
       setIsOnline(online);
     });
 
     socket.on('userOffline', ({ userId }) => {
       setOnlineUsers((prev) => {
+        const updated = new Set(prev);
+        updated.delete(userId);
+        return updated;
+      });
+      setActiveUsers((prev) => {
         const updated = new Set(prev);
         updated.delete(userId);
         return updated;
@@ -601,19 +607,24 @@ const Home: React.FC = () => {
     authUser?._id,
     selectedGroup,
     currentUser
+    // activeUsers
   ]);
 
-  const handleUpdating = useCallback((update: AuthContextType | null, authUsers: Set<string>) => {
-    if (update) {
-      if (authUsers) {
-        for (const userId of authUsers) {
-          if (update._id == userId) {
-            setCurrentUser(update);
+  const handleUpdating = useCallback(
+    (update: AuthContextType | null, authUsers: Set<string>) => {
+      if (update) {
+        if (authUsers || activeUsers) {
+          for (const userId of authUsers) {
+            if (update._id === userId) {
+              setCurrentUser(update);
+            }
+            setCurrentUser(currentUser);
           }
         }
       }
-    }
-  }, []);
+    },
+    [activeUsers, currentUser]
+  );
 
   const handleProfileUpdate = (values: AuthContextType) => {
     if (values && socket) {

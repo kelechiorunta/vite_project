@@ -1,5 +1,5 @@
 import { Avatar, Card, Flex, Heading, Inset, Text } from '@radix-ui/themes';
-import AnimateText from '../AnimateText/AnimateText';
+// import AnimateText from '../AnimateText/AnimateText';
 
 export default function LandingCaption() {
   return (
@@ -13,17 +13,17 @@ export default function LandingCaption() {
           highContrast
         >
           {/* <div style={{ position: 'relative', top: 0, left: 0 }}> */}
-          <div style={{ position: 'absolute', top: 2.5, left: 3 }}>
+          {/* <div style={{ position: 'absolute', top: 2.5, left: 3 }}>
             <AnimateText texts={['JUSTCHAT']} />
           </div>
-          JUSTCHAT
+          JUSTCHAT */}
           {/* </div> */}
         </Heading>
         <div style={{ zIndex: 1, backgroundColor: 'rgba(0,0,0,0.9)' }}>
           <Avatar
             width={'500px'}
             style={{ objectFit: 'cover', position: 'absolute', top: 30, zIndex: -1, left: 0 }}
-            src={'/assets/portfolio.jpeg'}
+            src={'/assets/happy.jpg'}
             fallback="/assets/client3.jpg"
             size={'9'}
           />
