@@ -40,11 +40,10 @@ function App() {
             wrap={'wrap'}
             // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
             gap="2"
-            width="100%"
-            minWidth={'100%'}
-            maxWidth={'100%'}
+            width={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+            maxWidth={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+            minWidth={{ initial: '105%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
             maxHeight={'100%'}
-            // height={'100%'}
             justify={'center'}
             align={'center'}
             style={{ margin: 'auto', overflow: 'hidden' }}
@@ -69,6 +68,7 @@ function App() {
                   // height: '100%',
                   // minHeight: '70vh',
                   width: '100%',
+                  // minWidth: '400px',
                   // backgroundImage: `url(${happyImg})`,
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',
