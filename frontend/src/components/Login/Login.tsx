@@ -59,14 +59,13 @@ const Login: React.FC<LoginProps> = ({
   const navigate = useNavigate();
 
   return (
-    
     <Flex
       align="center"
       justify="center"
       direction="column"
-      width={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
-      minWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
-      maxWidth={{ initial: '100%', xs: '100%', sm: '80%', md: '50%', lg: '50%' }}
+      width={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+      minWidth={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+      maxWidth={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
       flexBasis={'1'}
       flexGrow={{ initial: '1', xs: '0', sm: '1', md: '1', lg: '1' }}
       // ml={{ initial: '-9', xs: '0', sm: '0', md: '0', lg: '0' }}
@@ -102,7 +101,11 @@ const Login: React.FC<LoginProps> = ({
       {/* Login card */}
       <Box style={{ width: 'min(100%, 100%)' }}>
         <Card size="4" variant="surface" style={{ width: '100%' }}>
-          <Flex direction="column" gap="5" maxWidth={'100%'}>
+          <Flex
+            direction="column"
+            gap={{ initial: '2', xs: '3', sm: '4', md: '5', lg: '5' }}
+            maxWidth={'100%'}
+          >
             {/* <Flex direction="column" gap="1">
                 <Heading as="h1" size="6">
                   Login
@@ -163,7 +166,11 @@ const Login: React.FC<LoginProps> = ({
                 // setFieldValue
               }) => (
                 <form onSubmit={handleSubmit} noValidate style={{ width: '100%' }}>
-                  <Flex direction="column" gap="4" width={'100%'}>
+                  <Flex
+                    direction="column"
+                    gap={{ initial: '3', xs: '3', sm: '4', md: '4', lg: '4' }}
+                    width={'100%'}
+                  >
                     {/* Email */}
                     <div>
                       <Text as="label" size="2" mb="2" style={{ display: 'block' }}>
@@ -248,13 +255,13 @@ const Login: React.FC<LoginProps> = ({
                             Remember me
                           </Text> */}
                       </Flex>
-                      <RadixLink href="/forgot-password" size="2">
+                      <RadixLink href="#" size="2">
                         Forgot password?
                       </RadixLink>
                     </Flex>
 
                     {/* Submit */}
-                    <Button size="3" type="submit" disabled={isSubmitting}>
+                    <Button radius="small" size="3" type="submit" disabled={isSubmitting}>
                       Sign in
                       <ArrowRightIcon />
                     </Button>
@@ -269,7 +276,7 @@ const Login: React.FC<LoginProps> = ({
                     </Flex>
 
                     {/* Google OAuth */}
-                    <Button asChild size="3" variant="soft" color="red">
+                    <Button radius="small" asChild size="3" variant="soft" color="red">
                       <a href={googleHref} style={{ textDecoration: 'none' }}>
                         Continue with Google
                       </a>
@@ -287,7 +294,6 @@ const Login: React.FC<LoginProps> = ({
         </Card>
       </Box>
     </Flex>
-  
   );
 };
 

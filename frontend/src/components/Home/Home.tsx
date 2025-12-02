@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // const Home: React.FC = () => {
 //   const [selectedContact, setSelectedContact] = React.useState<string | null>(null);
 //   const [drawerOpen, setDrawerOpen] = React.useState(false);
