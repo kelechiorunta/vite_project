@@ -70,6 +70,7 @@ const Login: React.FC<LoginProps> = ({
       flexGrow={{ initial: '1', xs: '0', sm: '1', md: '1', lg: '1' }}
       // ml={{ initial: '-9', xs: '0', sm: '0', md: '0', lg: '0' }}
       p={{ initial: '0', xs: '4', sm: '4', md: '4', lg: '4' }}
+      m={'auto'}
       // style={{ maxHeight: '100%', padding: '4px', maxWidth: '100%', width: '100%' }}
     >
       {/* {/* Top bar */}
@@ -77,7 +78,7 @@ const Login: React.FC<LoginProps> = ({
         align="center"
         justify="between"
         // width={'100%'}
-        style={{ width: 'min(100%, 1440px)', marginBottom: '4px', zIndex: 50 }}
+        style={{ width: 'min(95%, 1440px)', marginBottom: '4px', zIndex: 50 }}
       >
         <Heading size="4">JustChat</Heading>
         <Flex align="center" gap="2">
