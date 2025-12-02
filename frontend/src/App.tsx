@@ -5,7 +5,7 @@ import Login from './components/Login/Login';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Home from './components/Home/Home';
 import Signup from './components/Signup/Signup';
-import { AlertDialog, Avatar, Flex, Grid, Heading } from '@radix-ui/themes';
+import { Avatar, Flex, Grid, Heading } from '@radix-ui/themes';
 import LandingCaption from './components/LandingCaption/LandingCaption';
 
 import Slider from './components/Slider/Slider';
@@ -58,7 +58,7 @@ function App() {
               //   md: 'relative',
               //   lg: 'relative'
               // }}
-              width={{ initial: '100%', xs: '90%', sm: '90%', md: '90%', lg: '100%' }}
+              width={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
             >
               <Avatar
                 src="/assets/happy.jpg"
