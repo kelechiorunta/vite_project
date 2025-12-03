@@ -36,14 +36,14 @@ function App() {
           //     >
           <Flex
             // style={{ padding: '2' }}
-            p={'1'}
+            p={'2'}
             pr={'2'}
             wrap={'wrap'}
             // columns={{ xs: '1', sm: '2', md: '2', lg: '2', xl: '2' }}
             gap="2"
-            width={{ initial: '90%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+            width={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
             maxWidth={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
-            minWidth={{ initial: '105%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
+            minWidth={{ initial: '100%', xs: '100%', sm: '100%', md: '100%', lg: '100%' }}
             maxHeight={'100%'}
             justify={'center'}
             align={'center'}
