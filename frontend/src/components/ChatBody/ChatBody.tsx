@@ -296,7 +296,7 @@ const ChatBody: React.FC<{
           flex: 1,
           overflowY: 'scroll',
           padding: '16px',
-          maxHeight: isMobile ? '75vh' : '82vh',
+          maxHeight: isMobile ? '70vh' : '78vh',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
