@@ -30,9 +30,10 @@ export const ChatHeader: React.FC<{
       justify="between"
       px="3"
       py="2"
-      style={{ borderBottom: '1px solid var(--gray-a3)' }}
+      style={{ borderBottom: '1px solid var(--gray-a3)', zIndex: 50 }}
+      position={isMobile || isCollapsible ? 'sticky' : 'relative'}
     >
-      <Flex align="center" gap="3">
+      <Flex align="center" gap="3" style={{ zIndex: 50 }}>
         {onBack ? (
           <Button
             variant="ghost"
