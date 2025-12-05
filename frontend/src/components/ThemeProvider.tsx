@@ -70,7 +70,7 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
         onClick={toggleAppearance}
         style={{
           position: 'fixed',
-          bottom: '3rem',
+          bottom: '7rem',
           left: '0.251rem',
           padding: '0.6rem 1rem',
           borderRadius: '10px',
