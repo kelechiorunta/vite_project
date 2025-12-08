@@ -15,6 +15,7 @@ const configureSocket = (app, corsOptions) => {
   const server = createServer(app);
   const socketOptions = { cors: corsOptions };
   const io = new Server(server, socketOptions);
+  app.set('io', io);
 
   const onlineUsers = new Map();
   const signedInUsers = new Set();
