@@ -12,6 +12,13 @@ const graphqlClient = new ApolloClient({
     typePolicies: {
       User: {
         keyFields: ['_id']
+      },
+      Query: {
+        fields: {
+          fetchChats: {
+            keyArgs: ['userId']
+          }
+        }
       }
     }
   })
