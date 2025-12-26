@@ -16,7 +16,7 @@ const graphqlClient = new ApolloClient({
       Query: {
         fields: {
           fetchChats: {
-            keyArgs: ['userId']
+            keyArgs: ['$userId']
           }
         }
       }
