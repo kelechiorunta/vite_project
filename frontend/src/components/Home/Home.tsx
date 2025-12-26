@@ -639,6 +639,7 @@ const Home: React.FC = () => {
   const handleSelectChat = async (chatUser: AuthContextType | null) => {
     _setSelectedGroup(null);
     setSelectedContact(chatUser);
+    setMessages([]);
     // remove unread messages for this user
     // setUnreadMap((prev) => {
     //   const updated = { ...prev };
@@ -833,7 +834,7 @@ const Home: React.FC = () => {
     //   socket.emit('markGroupAsRead', { groupId: group._id, userId: currentUser._id });
     // }
 
-    // ✅ 1. Show cached messages instantly if available
+    // Show cached messages instantly if available
     if (chatCache && chatCache?.[group._id as string]) {
       setMessages(chatCache[group._id as string].messages);
       // setNotifiedUser(null); // groups don’t have a single “notified user”
@@ -841,7 +842,7 @@ const Home: React.FC = () => {
       setMessages([]); // placeholder while loading
     }
 
-    // ✅ 2. Fetch latest group messages from server
+    // Fetch latest group messages from server
     try {
       const { data } = await fetchGroupMsgs({
         variables: {
@@ -869,7 +870,7 @@ const Home: React.FC = () => {
 
   const [isCollapsible, setIsCollapsible] = React.useState(window.innerWidth < 400);
 
-  // 🔥 Watch window resize and update `isMobile`
+  // Watch window resize and update `isMobile`
   React.useEffect(() => {
     const handleResize = () => {
       setIsCollapsible(window.innerWidth < 360);
